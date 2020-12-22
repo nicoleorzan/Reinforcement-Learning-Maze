@@ -9,7 +9,7 @@ void Experiment::single_run(Agent &ag, Environment &env){
     for (int i=0; i<run_length; i++){
         a = ag.agent_step_epsilon_greedy(rew, s);
         rew = env.sample_reward(a);
-        s_new = env.sample_next_state(s, a);
+        s_new = env.next_state(s, a);
         a_new = ag.agent_step_epsilon_greedy(rew, s_new);
     }
 
