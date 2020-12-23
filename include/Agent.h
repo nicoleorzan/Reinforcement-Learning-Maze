@@ -23,7 +23,7 @@ class Agent{
 
     int from_ij_to_idx(int state_i, int state_j);
 
-    int agent_step_epsilon_greedy(double reward, int state);
+    int agent_step_epsilon_greedy(int state);
 
     void SARSA(int s, int a, double reward, int s_next, int a_next);
 

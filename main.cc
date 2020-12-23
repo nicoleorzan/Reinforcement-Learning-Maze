@@ -17,10 +17,12 @@ int main(){
 
     // in this way I can define a new agent
     Agent ag(n_states, n_actions, epsilon, learning_rate, discount_rate, starting_state);
-
+    
+    // Define the maze
     Environment maze(N, final_state);
     maze.display_maze();
 
+    // Run the experiment (agent acts on the maze, maze gives back next state and reward, and loop goes on)
     Experiment exp(run_length);
     exp.single_run(ag, maze);
 

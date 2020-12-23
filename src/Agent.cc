@@ -32,7 +32,7 @@ int Agent::agent_start(){
    return rand() % (( n_actions ));
 };
 
-int Agent::agent_step_epsilon_greedy(double reward, int state){
+int Agent::agent_step_epsilon_greedy(int state){
     int act = 0;
 
     double rand_num = ((double) rand() / (RAND_MAX));
