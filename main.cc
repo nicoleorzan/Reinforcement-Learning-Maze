@@ -13,14 +13,16 @@ int main(){
     int n_states = N*N;
     int starting_state = 12;
     int final_state = 3;
+    int run_length = 10;
 
     // in this way I can define a new agent
-    Agent agent(n_states, n_actions, epsilon, learning_rate, discount_rate, starting_state);
+    Agent ag(n_states, n_actions, epsilon, learning_rate, discount_rate, starting_state);
 
     Environment maze(N, final_state);
     maze.display_maze();
 
-    Experiment e(agent, maze);
+    Experiment exp(run_length);
+    exp.single_run(ag, maze);
 
     return 0;
 }

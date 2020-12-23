@@ -17,15 +17,15 @@ class Agent{
 
     ~Agent();
 
-    int agent_start(int state);
+    int get_initial_state();
+
+    int agent_start();
 
     int from_ij_to_idx(int state_i, int state_j);
 
     int agent_step_epsilon_greedy(double reward, int state);
 
-    void agent_end(double reward);
-
-    void SARSA(int s, int s_next, int a, int a_next, double reward);
+    void SARSA(int s, int a, double reward, int s_next, int a_next);
 
     void SARSA_final(int s, int a, double reward);
 };

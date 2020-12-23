@@ -20,12 +20,16 @@ Agent::~Agent(){
     delete[] Q;
 };
 
+int Agent::get_initial_state(){
+    return starting_state;
+}
+
 int Agent::from_ij_to_idx(int state_i, int state_j){
     return state_i + n_actions*state_j;
 }
 
-int Agent::agent_start(int state){
-
+int Agent::agent_start(){
+   return rand() % (( n_actions ));
 };
 
 int Agent::agent_step_epsilon_greedy(double reward, int state){
@@ -48,12 +52,7 @@ int Agent::agent_step_epsilon_greedy(double reward, int state){
     return act;
 };
 
-void Agent::agent_end(double reward){
-
-
-};
-
-void Agent::SARSA(int s, int s_next, int a, int a_next, double reward){
+void Agent::SARSA(int s, int a, double reward, int s_next, int a_next){
     Q[s*n_actions+a] += learning_rate*(reward + discount_rate*Q[s_next*n_actions + a_next] - Q[s*n_actions+a]);
 };
 

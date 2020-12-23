@@ -10,7 +10,7 @@ class Experiment{
     public:
         int run_length;
 
-    Experiment();
+    Experiment(int r);
 
     void single_run(Agent &ag, Environment & env);
 
