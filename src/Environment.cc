@@ -1,5 +1,6 @@
 #include "Environment.h"
-#include "stdio.h"
+#include <iostream>
+
 
 Environment::Environment(int n, int fs){
     N = n;
@@ -12,32 +13,72 @@ Environment::~Environment(){
     delete[] maze;
 };
 
+int Environment::get_final_state(){
+    return final_state;
+}
+
 void Environment::display_maze(){
     for (int i=0; i<N; i++){
         for (int j=0; j<N; j++){
-            printf("%d ",maze[i+N*j]);
+            printf("%d ",maze[i*N+j]);
         }
         printf("\n");
     }    
 };
 
 void Environment::fill_maze(){
-    // loop throught the maxe and fill it with ones and zeros. For the moment use a fixed maze. 
-    // You can also think how we can dynamicize it! I have no idea up to now   
-    // NB: to fill the maze use the expression maze[i+N*j], not maze[i][j], as I did above
+    for (int i=0; i<N; i++){
+        for (int j=0; j<N; j++){
+            maze[i*N+j] = 0;
+            if ((i==0 & j==0) || (i==1 & j==0) || (i==2 & j==0) || (i==1 & j==1) || (i==3 & j==2)){
+                maze[i*N+j] = 1;
+            }
+        }
+    }
 };
 
 int Environment::next_state(int state, int action){
-    int next_state = 0;
-    // env gets a state and an action and returns the next state
+    int next_state = state;
+
+    if (action == 0){
+        if (state - N >= 0){
+            next_state = state - N;
+        }
+    } 
+    
+    else if (action == 1){
+        if (state + N < N*N){
+            next_state = state + N;
+        }
+    } 
+    
+    else if (action == 2){
+        if (state%N != 0){
+            next_state = state - 1;
+        }
+
+    } 
+    
+    else if (action == 3){
+        if (state+1%N != 0){
+        next_state = state + 1;
+        }
+    }
+    //std::cout<<"next_state="<<next_state<<std::endl;
+    //std::cout<<maze[next_state]<<std::endl;
+    if (maze[next_state] == 1){
+        next_state = state;
+    }
+
     return next_state;
 };
 
 double Environment::sample_reward(int state){
-    // for the moment I am using a dummy reward function
+
     int reward = 0;
     if (state == final_state){
         reward = 1;
     }
+
     return reward;
 };

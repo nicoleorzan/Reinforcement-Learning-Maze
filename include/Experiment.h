@@ -8,11 +8,15 @@
 class Experiment{
 
     public:
-        int run_length;
+        int n_runs;
 
-    Experiment(int r);
+    Experiment(int n_r);
 
     void single_run(Agent &ag, Environment & env);
+
+    void more_runs(Agent &ag, Environment & env);
+
+    void evaluation(Agent &ag, Environment & env);
 
 };
 

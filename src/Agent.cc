@@ -24,10 +24,6 @@ int Agent::get_initial_state(){
     return starting_state;
 }
 
-int Agent::from_ij_to_idx(int state_i, int state_j){
-    return state_i + n_actions*state_j;
-}
-
 int Agent::agent_start(){
    return rand() % (( n_actions ));
 };
@@ -36,6 +32,7 @@ int Agent::agent_step_epsilon_greedy(int state){
     int act = 0;
 
     double rand_num = ((double) rand() / (RAND_MAX));
+    //std::cout<<"rand num="<<rand_num<<std::endl;
     if (rand_num < epsilon){       //random action
         act = rand() % (( n_actions ));
     } else {                       //greedy action
@@ -60,3 +57,11 @@ void Agent::SARSA_final(int s, int a, double reward){
     Q[s*n_actions+a] += learning_rate*(reward - Q[s*n_actions+a]);
 };
 
+void Agent::print_Q(){
+    for (int i=0; i<n_states; i++){
+        for (int j=0; j<n_actions; j++){
+            std::cout<<Q[i*n_actions+j]<<"  ";
+        }
+        std::cout<<std::endl;
+    }
+}

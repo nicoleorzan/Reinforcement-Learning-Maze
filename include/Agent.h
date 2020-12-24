@@ -21,13 +21,13 @@ class Agent{
 
     int agent_start();
 
-    int from_ij_to_idx(int state_i, int state_j);
-
     int agent_step_epsilon_greedy(int state);
 
     void SARSA(int s, int a, double reward, int s_next, int a_next);
 
     void SARSA_final(int s, int a, double reward);
+
+    void print_Q();
 };
 
 #endif
