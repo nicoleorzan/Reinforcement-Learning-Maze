@@ -12,6 +12,7 @@ class Agent{
         int starting_state;
 
         double *Q;
+        double *Q_temperature;
 
     Agent(int n_stat, int n_act, double e, double l, double d, int s);
 
@@ -22,6 +23,8 @@ class Agent{
     int agent_start();
 
     int agent_step_epsilon_greedy(int state);
+    
+    int agent_Boltzmann_exploration(int state, double T);
 
     void SARSA(int s, int a, double reward, int s_next, int a_next);
 
