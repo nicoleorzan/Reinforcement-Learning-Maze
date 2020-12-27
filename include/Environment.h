@@ -11,7 +11,7 @@ class Environment{
     int final_state; // final state defined by user
     int *maze;
 
-    Environment(int n, int fs);
+    Environment(int n, int is, int fs);
 
     ~Environment();
 

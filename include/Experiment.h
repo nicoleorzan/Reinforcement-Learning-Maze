@@ -4,7 +4,6 @@
 #include "Agent.h"
 #include "Environment.h"
 
-
 class Experiment{
 
     public:
