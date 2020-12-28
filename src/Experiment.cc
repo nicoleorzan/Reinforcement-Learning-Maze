@@ -40,7 +40,7 @@ void Experiment::single_run(Agent &ag, Environment &env){
 void Experiment::more_runs(Agent &ag, Environment &env){
 
     for (int run_number=0; run_number<n_runs; run_number++){
-        std::cout<<"\nRun="<<run_number<<std::endl;
+        //std::cout<<"\nRun="<<run_number<<std::endl;
         this->single_run(ag, env);
     }
 };
