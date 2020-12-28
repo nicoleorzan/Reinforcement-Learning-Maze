@@ -3,7 +3,7 @@
 #include <random>
 #include <algorithm>
 
-#define submaze_step 3
+#define submaze_step 2
 
 Random_maze::Random_maze(int n, int is, int fs){
     N = n;
@@ -72,7 +72,7 @@ std::vector<int> Random_maze::create(){
     int i_x = 0, i_y =0 ;
     while(i_x < N){
         nodes_x.push_back(i_x);
-        i_x += rand() % 3;
+        i_x += rand() % 3 +1;
     }
     while(nodes_y.size() < nodes_x.size()){
         i_y = rand() % N;
@@ -82,7 +82,7 @@ std::vector<int> Random_maze::create(){
     nodes_x.push_back(fin_x);
     nodes_y.push_back(fin_y);
 
-    std::cout << "nodes x\n";
+    /*std::cout << "nodes x\n";
     for (std::vector<int>::const_iterator i = nodes_x.begin(); i != nodes_x.end(); ++i)
         std::cout << *i << ' ';
     std::cout<<std::endl;
@@ -91,6 +91,7 @@ std::vector<int> Random_maze::create(){
     for (std::vector<int>::const_iterator i = nodes_y.begin(); i != nodes_y.end(); ++i)
         std::cout << *i << ' ';
     std::cout<<std::endl;
+    */
 
     std::vector<int> tmp;
     for (size_t i=0; i<nodes_x.size()-1; i++){
@@ -100,31 +101,26 @@ std::vector<int> Random_maze::create(){
     }
     nodes.push_back(nodes_y.back()*N+nodes_x.back());
 
-    std::cout << "nodes\n";
+    /*std::cout << "nodes\n";
     for (std::vector<int>::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
         std::cout << *i << ' ';
     std::cout<<std::endl;
-
+    */
     sort(nodes.begin(), nodes.end()); 
-
-    std::cout << "nodes\n";
-    for (std::vector<int>::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
-        std::cout << *i << ' ';
-    std::cout<<std::endl;
 
     // END MAIN PATH
     // SUBPATHS
 
 
     int num_submazes = N/submaze_step;
-    std::cout<<"num submazes="<<num_submazes<<std::endl;
+    //std::cout<<"num submazes="<<num_submazes<<std::endl;
     int ini, fin;
 
-    for (int i=0; i<num_submazes; i++){
+    for (int i=0; i<num_submazes; i++){S
         ini = nodes.at(rand() % nodes.size());
         fin = nodes.at(rand() % nodes.size());
-        std::cout<<"initial node="<<ini<<::std::endl;
-        std::cout<<"final node="<<fin<<::std::endl;
+        //std::cout<<"initial node="<<ini<<::std::endl;
+        //std::cout<<"final node="<<fin<<::std::endl;
         tmp = state_to_state(ini%N, ini/N, fin%N, fin/N);
         states_tot.insert(states_tot.end(), tmp.begin(), tmp.end());
     }
