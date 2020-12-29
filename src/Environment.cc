@@ -33,11 +33,31 @@ int Environment::get_final_state(){
 
 void Environment::display_maze(){
     for (int i=0; i<N; i++){
+        std::cout<<i*N<<"  ";
         for (int j=0; j<N; j++){
             printf("%d ",maze[i*N+j]);
         }
         printf("\n");
     }    
+};
+
+std::vector<int> Environment::allowed_actions(int state){
+
+    std::vector<int> allow_act;
+    if ( state/N-1>=0 && maze[state-N] == 0 ){
+        allow_act.push_back(0); // up
+    }
+    if ( state/N+1<N && maze[state+N] == 0 ){
+        allow_act.push_back(1); // down
+    }
+    if ( (state)%N-1>=0 && maze[state-1] == 0 ){
+        allow_act.push_back(2); // left
+    }
+    if ( (state)%N+1<N && maze[state+1] == 0 ){
+        allow_act.push_back(3); // right
+    }
+
+    return allow_act;
 };
 
 void Environment::fill_maze(){

@@ -1,6 +1,8 @@
 #ifndef AGENT
 #define AGENT
 
+#include <vector>
+
 class Agent{
 
     public:
@@ -20,11 +22,9 @@ class Agent{
 
     int get_initial_state();
 
-    int agent_start();
-
-    int agent_step_epsilon_greedy(int state);
+    int agent_step_epsilon_greedy(int state, std::vector<int> allowed_actions);
     
-    int agent_Boltzmann_exploration(int state, double T);
+    int agent_Boltzmann_exploration(int state, std::vector<int> allowed_actions, double T);
 
     void SARSA(int s, int a, double reward, int s_next, int a_next);
 

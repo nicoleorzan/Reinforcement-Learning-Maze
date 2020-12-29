@@ -28,24 +28,27 @@ int Agent::get_initial_state(){
     return starting_state;
 }
 
-int Agent::agent_start(){
-   return rand() % (( n_actions ));
-};
-
-int Agent::agent_step_epsilon_greedy(int state){
+int Agent::agent_step_epsilon_greedy(int state, std::vector<int> allowed_actions){
     int act = 0;
+    int act_idx = 0;
 
     double rand_num = ((double) rand() / (RAND_MAX));
     //std::cout<<"rand num="<<rand_num<<std::endl;
     if (rand_num < epsilon){       //random action
-        act = rand() % (( n_actions ));
+        //act = rand() % (( n_actions ));
+        //std::cout<<"allowed actions size="<<allowed_actions.size()<<std::endl;
+        act_idx = rand() % allowed_actions.size(); 
+        act = allowed_actions[act_idx];
     } else {                       //greedy action
-        int max_idx = 0;
-        double max_val = 0;
-        for (int j=0; j<n_actions; j++){
-            if (Q[state*n_actions + j] > max_val){
-                max_val = Q[state*n_actions + j];
-                max_idx = j;
+        int max_idx = allowed_actions[0];
+        double max_val = Q[state*n_actions+allowed_actions[0]];
+        for (int j=0; j<n_actions; j++){    
+            if (std::find(allowed_actions.begin(), allowed_actions.end(), j) != allowed_actions.end()) {
+                //std::cout<<"action "<<j<<" is present in the actions array"<<std::endl;
+                if (Q[state*n_actions + j] > max_val){
+                    max_val = Q[state*n_actions + j];
+                    max_idx = j;
+                }
             }
         }
         act = max_idx;
@@ -53,7 +56,7 @@ int Agent::agent_step_epsilon_greedy(int state){
     return act;
 };
 
-int Agent::agent_Boltzmann_exploration(int state, double T){
+int Agent::agent_Boltzmann_exploration(int state, std::vector<int> allowed_actions, double T){
 
     int action = 0;
     double max_val = 0;
@@ -62,19 +65,33 @@ int Agent::agent_Boltzmann_exploration(int state, double T){
     std::vector<double> weights;
 
     for (int i=0; i<n_actions; i++){
-        Q_temperature[state*n_actions+i] = Q[state*n_actions+i]/T;
-        if (Q[state*n_actions+i] > max_val){
-            max_val = Q[state*n_actions+i];
+        if (std::find(allowed_actions.begin(), allowed_actions.end(), i) != allowed_actions.end()) {
+            Q_temperature[state*n_actions+i] = Q[state*n_actions+i]/T;
+            if (Q[state*n_actions+i] > max_val){
+                max_val = Q[state*n_actions+i];
+            }
         }
     }
     
     for (int i=0; i<n_actions; i++){
-        denom += exp(Q_temperature[state*n_actions+i] - max_val);
+        if (std::find(allowed_actions.begin(), allowed_actions.end(), i) != allowed_actions.end()) {
+            denom += exp(Q_temperature[state*n_actions+i] - max_val);
+        }
     }
 
     for (int i=0; i<n_actions; i++){
-        weights.push_back(exp(Q_temperature[state*n_actions+i] - max_val)/denom);
+        if (std::find(allowed_actions.begin(), allowed_actions.end(), i) != allowed_actions.end()) {
+            weights.push_back(exp(Q_temperature[state*n_actions+i] - max_val)/denom);
+        }
+        else {
+            weights.push_back(0);
+        }
     }
+
+    /*std::cout<<"print vector\n";
+    for (std::vector<double>::const_iterator i = weights.begin(); i != weights.end(); ++i)
+        std::cout << *i << ' ';
+    std::cout<<std::endl;*/
 
     std::random_device rd;
     std::mt19937 generator(rd());

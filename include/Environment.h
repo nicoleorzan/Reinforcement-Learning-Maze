@@ -1,6 +1,6 @@
 #ifndef ENVIRONMENT
 #define ENVIRONMENT
-
+#include <vector>
 
 // let's start working on a fixed maze
 class Environment{
@@ -20,6 +20,8 @@ class Environment{
     int next_state(int state, int action);
 
     int get_final_state();
+
+    std::vector<int> allowed_actions(int state);
 
     void fill_maze();
 

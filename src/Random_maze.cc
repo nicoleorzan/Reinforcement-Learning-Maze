@@ -49,7 +49,6 @@ std::vector<int> Random_maze::state_to_state(int init_x, int init_y, int fin_x, 
             //std::cout<<"j*N+ix="<<j*N+fx<<std::endl;
         }
     }
-    std::cout<<std::endl;
     return states_tmp;
 };
 
@@ -116,7 +115,7 @@ std::vector<int> Random_maze::create(){
     //std::cout<<"num submazes="<<num_submazes<<std::endl;
     int ini, fin;
 
-    for (int i=0; i<num_submazes; i++){S
+    for (int i=0; i<num_submazes; i++){
         ini = nodes.at(rand() % nodes.size());
         fin = nodes.at(rand() % nodes.size());
         //std::cout<<"initial node="<<ini<<::std::endl;
