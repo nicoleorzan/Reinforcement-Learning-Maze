@@ -110,7 +110,6 @@ std::vector<int> Random_maze::create(){
     // END MAIN PATH
     // SUBPATHS
 
-
     int num_submazes = N/submaze_step;
     //std::cout<<"num submazes="<<num_submazes<<std::endl;
     int ini, fin;
@@ -126,71 +125,4 @@ std::vector<int> Random_maze::create(){
 
     return states_tot;
 
-    /*    
-    for (int i=0; i<N; i++){
-        for (int j=0; j<N; j++){
-            if (std::find_if(states_tot.begin(), states_tot.end(), compare(i*N+j)) != states_tot.end()){
-                maze[i*N+j] = 0;
-            }
-            else {
-                maze[i*N+j] = 1;
-            }
-        }
-    }
-    
-    for (int i=0; i<N; i++){
-        for (int j=0; j<N; j++){  
-            std::cout<<maze[i*N+j]<<" ";
-        }
-        std::cout<<std::endl;
-    }*/
-
 };
-
-/*std::vector<int> Random_maze::create_submaze(int N, int initial, int final){
-
-    int init_y = initial/N;
-    int init_x = initial%N;
-    int fin_y = final/N;
-    int fin_x = final%N;
-    srand (time(NULL));
-
-    std::vector<int> states_x;
-    std::vector<int> states_y;
-
-    states_x.push_back(init_x);
-    states_y.push_back(init_y);
-
-    int i_x = 0, i_y =0 ;
-    while(i_x < N){
-        states_x.push_back(i_x);
-        i_x += rand() % 3; //step_x;
-    }
-    while(states_y.size() < states_x.size()){
-        i_y = rand() % N;
-        states_y.push_back(i_y);
-    }
-
-    states_x.push_back(fin_x);
-    states_y.push_back(fin_y);
-
-    for (std::vector<int>::const_iterator i = states_x.begin(); i != states_x.end(); ++i)
-        std::cout << *i << ' ';
-    std::cout<<std::endl;
-
-    for (std::vector<int>::const_iterator i = states_y.begin(); i != states_y.end(); ++i)
-        std::cout << *i << ' ';
-    std::cout<<std::endl;
-    std::cout<<std::endl;
-    
-
-    std::vector<int> states;
-    std::vector<int> tmp;
-    for (size_t i=0; i<states_x.size()-1; i++){
-        tmp = state_to_state(states_x.at(i), states_y.at(i), states_x.at(i+1), states_y.at(i+1));
-        states.insert(states.end(), tmp.begin(), tmp.end());
-    }
-
-    return states;
-
-}*/

@@ -104,6 +104,13 @@ int Agent::agent_Boltzmann_exploration(int state, std::vector<int> allowed_actio
 
 };
 
+void Agent::initialize_Q(){
+    for (int i=0; i<n_states*n_actions; i++){
+        Q[i] = 0;
+        Q_temperature[i] = 0;
+    }
+};
+
 void Agent::SARSA(int s, int a, double reward, int s_next, int a_next){
     Q[s*n_actions+a] += learning_rate*(reward + discount_rate*Q[s_next*n_actions + a_next] - Q[s*n_actions+a]);
 };

@@ -31,6 +31,8 @@ class Agent{
     void SARSA_final(int s, int a, double reward);
 
     void print_Q();
+
+    void initialize_Q();
 };
 
 #endif

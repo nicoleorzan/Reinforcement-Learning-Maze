@@ -17,8 +17,6 @@ class Random_maze{
 
     ~Random_maze();
 
-    //void display_maze();
-
     std::vector<int> create();
 
     std::vector<int> state_to_state(int init_x, int init_y, int fin_x, int fin_y);

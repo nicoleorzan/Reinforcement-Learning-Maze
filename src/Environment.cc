@@ -61,7 +61,7 @@ std::vector<int> Environment::allowed_actions(int state){
 };
 
 void Environment::fill_maze(){
-    Random_maze Rmaze(N, initial_state, final_state);
+    /*Random_maze Rmaze(N, initial_state, final_state);
     std::vector<int> states = Rmaze.create();
 
     for (int i=0; i<N; i++){
@@ -73,7 +73,21 @@ void Environment::fill_maze(){
                 maze[i*N+j] = 1;
             }
         }
-    }
+    }*/
+
+    for (int i = 0; i < N; i++) {
+		for (int j = 0; j < N; j++) {
+			maze[i*N + j] = 0;
+			if ((i == 0 & j == 0) || (i == 0 & j == 1) || (i == 0 & j == 2) || (i == 0 & j == 3) || (i == 0 & j == 4) || (i == 0 & j == 5) 
+				|| (i == 0 & j == 6) || (i == 1 & j == 0) || (i == 2 & j == 0) || (i == 3 & j == 0) 
+				|| (i == 4 & j == 0) || (i == 5 & j == 0) || (i == 1 & j == 1) || (i == 3 & j == 2)
+				|| (i == 7 & j == 1) || (i == 7 & j == 2) || (i == 7 & j == 3) || (i == 7 & j == 4) 
+				|| (i == 7 & j == 5) || (i == 7 & j == 6) || (i == 7 & j == 7) || (i == 2 & j == 7) 
+				|| (i == 3 & j == 7) || (i == 4 & j == 7) || (i == 5 & j == 7) || (i == 6 & j == 7)) {
+				maze[i*N + j] = 1;
+			}
+		}
+	}
 
     /*for (int i=0; i<N; i++){
         for (int j=0; j<N; j++){
@@ -112,8 +126,7 @@ int Environment::next_state(int state, int action){
         next_state = state + 1;
         }
     }
-    //std::cout<<"next_state="<<next_state<<std::endl;
-    //std::cout<<maze[next_state]<<std::endl;
+
     if (maze[next_state] == 1){
         next_state = state;
     }
