@@ -133,6 +133,7 @@ void Experiment::compute_average(){
 
 void Experiment::evaluation(Agent &ag, Environment &env){
 
+    std::cout<<"\nEvaluation of the learnt policy"<<std::endl;
     int s = 0, a = 0;
     std::vector<int> allow_act;
 
@@ -153,5 +154,6 @@ void Experiment::evaluation(Agent &ag, Environment &env){
         std::cout<<"s="<<s<<", a="<<a<<std::endl;    
         i += 1;
     }
+    std::cout<<"final number of steps="<<i<<std::endl;
 
 }

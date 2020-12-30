@@ -40,7 +40,7 @@ int main(){
     exp.compute_average();
     //ag.print_Q();
 
-    //exp.evaluation(ag, maze);
+    exp.evaluation(ag, maze);
 
     return 0;
 }
