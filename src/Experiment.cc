@@ -15,6 +15,41 @@ Experiment::~Experiment(){
     delete[] num_steps_each_experiment;
 };
 
+void Experiment::single_run_double_QL(Agent &ag, Environment &env){
+    int a = 0, a_new = 0;
+    int s = 0, s_new = 0;
+    std::vector<int> allow_act;
+    double rew = 0;
+    double randval = 0;
+
+    s = ag.get_initial_state(); 
+
+    int i=1;
+    while (i){
+
+        allow_act = env.allowed_actions(s);
+        a = ag.agent_epsilon_greedy_QA_QB(s, allow_act);
+        rew = env.sample_reward(s);
+
+        if (s == env.get_final_state()){
+            //std::cout<<"s="<<s<<std::endl;
+            ag.Update_QA_final(s, a, rew);
+            ag.Update_QB_final(s, a, rew);
+            break;
+        }
+
+        s_new = env.next_state(s, a);
+        allow_act = env.allowed_actions(s_new);
+
+        randval = ((double) rand() / (RAND_MAX));
+        if (randval < 0.5){
+            ag.update_QA(s, a, rew, s_new, allow_act);
+        } else { ag.update_QB(s, a, rew, s_new, allow_act); }
+        
+        s = s_new;       
+        i += 1;
+    }
+};
 
 void Experiment::single_run_Boltzmann(Agent &ag, Environment &env, double T){
 
@@ -38,7 +73,7 @@ void Experiment::single_run_Boltzmann(Agent &ag, Environment &env, double T){
         rew = env.sample_reward(s);
         if (s == env.get_final_state()){
             //std::cout<<"s="<<s<<std::endl;
-            ag.SARSA_final(s, a, rew);
+            ag.Update_Q_final(s, a, rew);
             break;
         }
 
@@ -54,6 +89,13 @@ void Experiment::single_run_Boltzmann(Agent &ag, Environment &env, double T){
         s = s_new;       
         i += 1;
         //std::cout<<"chosen action="<<a<<std::endl;
+    }
+};
+
+void Experiment::more_runs_double_QL(Agent &ag, Environment &env){
+
+    for (int run_number=0; run_number<n_runs; run_number++){
+        this->single_run_double_QL(ag, env);
     }
 };
 
@@ -74,22 +116,31 @@ int Experiment::single_run(Agent &ag, Environment &env){
     int num_steps = 0;
 
     s = ag.get_initial_state();
+    // /std::cout<<"initial state="<<s<<std::endl; 
     allow_act = env.allowed_actions(s);
+    /*for (std::vector<int>::const_iterator i = allow_act.begin(); i != allow_act.end(); ++i)
+        std::cout << *i << ' ';
+    std::cout<<std::endl;*/
     a = ag.agent_step_epsilon_greedy(s, allow_act); 
-
+    char ddd;
     int i=1;
     while (i){
 
         rew = env.sample_reward(s);
-
+        //std::cin>>ddd;
         if (s == env.get_final_state()){
-            ag.SARSA_final(s, a, rew);
+            ag.Update_Q_final(s, a, rew);
             break;
         }
 
         s_new = env.next_state(s, a);
+        //std::cout<<"chosen state="<<s_new<<std::endl;
         allow_act = env.allowed_actions(s_new);
+        /*for (std::vector<int>::const_iterator i = allow_act.begin(); i != allow_act.end(); ++i)
+            std::cout << *i << ' ';
+        std::cout<<std::endl;*/
         a_new = ag.agent_step_epsilon_greedy(s_new, allow_act);
+        //std::cout<<"chosen action="<<a_new<<std::endl;
         ag.SARSA(s, a, rew, s_new, a_new);
         a = a_new;
         s = s_new;       

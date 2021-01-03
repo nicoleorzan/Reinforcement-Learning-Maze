@@ -31,7 +31,7 @@ int Environment::get_final_state(){
     return final_state;
 }
 
-void Environment::display_maze(){
+/*void Environment::display_maze(){
     for (int i=0; i<N; i++){
         std::cout<<i*N<<"  ";
         for (int j=0; j<N; j++){
@@ -39,6 +39,27 @@ void Environment::display_maze(){
         }
         printf("\n");
     }    
+};*/
+
+void Environment::display_maze() {
+	for (int i = 0; i < N; i++) {
+		//std::cout<<i*N<<"  ";
+		for (int j = 0; j < N; j++) {
+			if ((i*N + j) == initial_state) {
+				printf("▶ ");
+			}
+			else if ((i*N + j) == final_state) {
+				printf("◎ ");
+			}
+			else if (maze[i*N + j] == 1) {
+				printf("■ ");
+			}
+			else {
+				printf("□ ");
+			}
+		}
+		printf("\n");
+	}
 };
 
 std::vector<int> Environment::allowed_actions(int state){
@@ -78,25 +99,20 @@ void Environment::fill_maze(){
     for (int i = 0; i < N; i++) {
 		for (int j = 0; j < N; j++) {
 			maze[i*N + j] = 0;
-			if ((i == 0 & j == 0) || (i == 0 & j == 1) || (i == 0 & j == 2) || (i == 0 & j == 3) || (i == 0 & j == 4) || (i == 0 & j == 5) 
-				|| (i == 0 & j == 6) || (i == 1 & j == 0) || (i == 2 & j == 0) || (i == 3 & j == 0) 
-				|| (i == 4 & j == 0) || (i == 5 & j == 0) || (i == 1 & j == 1) || (i == 3 & j == 2)
-				|| (i == 7 & j == 1) || (i == 7 & j == 2) || (i == 7 & j == 3) || (i == 7 & j == 4) 
-				|| (i == 7 & j == 5) || (i == 7 & j == 6) || (i == 7 & j == 7) || (i == 2 & j == 7) 
-				|| (i == 3 & j == 7) || (i == 4 & j == 7) || (i == 5 & j == 7) || (i == 6 & j == 7)) {
+			if ((i == 0 & j == 0) || (i == 0 & j == 1) || (i == 0 & j == 2) || (i == 0 & j == 3) || (i == 0 & j == 4) || (i == 0 & j == 5)
+				|| (i == 0 & j == 6)
+				|| (i == 1 & j == 0) || (i == 1 & j == 5)
+				|| (i == 2 & j == 0) || (i == 2 & j == 3) || (i == 2 & j == 4) || (i == 2 & j == 5)
+				|| (i == 3 & j == 0) || (i == 4 & j == 0) || (i == 5 & j == 0) || (i == 5 & j == 2) || (i == 5 & j == 3) || (i == 5 & j == 4)
+				|| (i == 1 & j == 1) || (i == 4 & j == 4) || (i == 4 & j == 5) || (i == 4 & j == 6)
+				|| (i == 3 & j == 2) || (i == 7 & j == 1) || (i == 7 & j == 2) || (i == 7 & j == 3)
+				|| (i == 7 & j == 4) || (i == 7 & j == 5) || (i == 7 & j == 6) || (i == 7 & j == 7)
+				|| (i == 2 & j == 7) || (i == 3 & j == 7) || (i == 4 & j == 7) || (i == 5 & j == 7)
+				|| (i == 6 & j == 7) || (i == 6 & j == 6)) {
 				maze[i*N + j] = 1;
 			}
 		}
 	}
-
-    /*for (int i=0; i<N; i++){
-        for (int j=0; j<N; j++){
-            maze[i*N+j] = 0;
-            if ((i==0 & j==0) || (i==1 & j==0) || (i==2 & j==0) || (i==1 & j==1) || (i==3 & j==2)){
-                maze[i*N+j] = 1;
-            }
-        }
-    }*/
 };
 
 int Environment::next_state(int state, int action){

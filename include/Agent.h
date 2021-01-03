@@ -14,6 +14,8 @@ class Agent{
         int starting_state;
 
         double *Q;
+        double *QA;
+        double *QB;
         double *Q_temperature;
 
     Agent(int n_stat, int n_act, double e, double l, double d, int s);
@@ -26,9 +28,21 @@ class Agent{
     
     int agent_Boltzmann_exploration(int state, std::vector<int> allowed_actions, double T);
 
+    int agent_epsilon_greedy_QA_QB(int state, std::vector<int> allowed_actions);
+
     void SARSA(int s, int a, double reward, int s_next, int a_next);
 
-    void SARSA_final(int s, int a, double reward);
+    void Update_Q_final(int s, int a, double reward);
+
+    void Update_QA_final(int s, int a, double reward);
+
+    void Update_QB_final(int s, int a, double reward);
+
+    void QL(int s, int a, double reward, int s_next, std::vector<int> allowed_actions);
+
+    void update_QA(int s, int a, double reward, int s_next, std::vector<int> allowed_actions);
+
+    void update_QB(int s, int a, double reward, int s_next, std::vector<int> allowed_actions);
 
     void print_Q();
 

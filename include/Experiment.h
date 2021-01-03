@@ -21,7 +21,11 @@ class Experiment{
 
     void single_run_Boltzmann(Agent &ag, Environment & env, double T);
 
+    void single_run_double_QL(Agent &ag, Environment &env);
+
     void more_runs(Agent &ag, Environment & env, int experiment_number);
+        
+    void more_runs_double_QL(Agent &ag, Environment &env);
 
     void more_experiments(Agent &ag, Environment & env);
 
