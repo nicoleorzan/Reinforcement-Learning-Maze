@@ -17,23 +17,27 @@ class Experiment{
 
     ~Experiment();
 
-    int single_run(Agent &ag, Environment & env);
+    int single_run_SARSA(Agent &ag, Environment & env);
 
-    void single_run_Boltzmann(Agent &ag, Environment & env, double T);
+    int single_run_QL(Agent &ag, Environment & env);
 
-    void single_run_double_QL(Agent &ag, Environment &env);
+    int single_run_double_QL(Agent &ag, Environment &env);
 
-    void more_runs(Agent &ag, Environment & env, int experiment_number);
-        
-    void more_runs_double_QL(Agent &ag, Environment &env);
+    int single_run_QV(Agent &ag, Environment &env);
 
-    void more_experiments(Agent &ag, Environment & env);
 
-    void more_Boltzmann_exploration_runs(Agent &ag, Environment & env, double T);
+    void more_runs(Agent &ag, Environment & env, int experiment_number, int algorithm);
 
-    void evaluation(Agent &ag, Environment & env);
+    void more_experiments(Agent &ag, Environment & env, int algorithm);
+
+    void evaluation_SARSA(Agent &ag, Environment & env, int algorithm);
 
     void compute_average();
+
+
+    //void single_run_Boltzmann(Agent &ag, Environment & env, double T);
+
+    //void more_Boltzmann_exploration_runs(Agent &ag, Environment & env, double T);
 };
 
 #endif
