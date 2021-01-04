@@ -41,35 +41,40 @@ int main(){
     maze.display_maze();
 
     // Run the experiment (agent acts on the maze, maze gives back next state and reward, and loop goes on)
-    Experiment exp(num_runs, num_experiments);
+    //Experiment exp(num_runs, num_experiments);
 
     // =============== RUN SARSA ================
     //exp.single_run_SARSA(ag, maze);
     //exp.more_runs(ag, maze, 0);
+    Experiment exp(num_runs, num_experiments);
     int algorithm = 0; // algorithm number: 0=SARSA, 1=Q_learning, 2=double Q_learning, 3=QV
     exp.more_experiments(ag, maze, algorithm);
     average_steps_sarsa = exp.compute_average();
  
     // =============== RUN Q LEARNING ================
+    Experiment exp1(num_runs, num_experiments);
     algorithm = 1;
-    exp.more_experiments(ag, maze, algorithm);
-    average_steps_q_learning = exp.compute_average();
+    exp1.more_experiments(ag, maze, algorithm);
+    average_steps_q_learning = exp1.compute_average();
 
 
     // =============== RUN DOUBLE Q LEARNING ================
-   /* algorithm = 2;
-    exp.more_experiments(ag, maze, algorithm);
-    exp.compute_average();
+    /* algorithm = 2;
+    Experiment exp2(num_runs, num_experiments);
+    exp2.more_experiments(ag, maze, algorithm);
+    average_steps_double_q_learning = exp2.compute_average();
 
     ag.print_QA();
     std::cout<<std::endl;
     ag.print_QB();
+    */
 
     // =============== RUN QV LEARNING ================
+    Experiment exp3(num_runs, num_experiments);
     algorithm = 3;
-    exp.more_experiments(ag, maze, algorithm);
-    exp.compute_average();
-*/
+    exp3.more_experiments(ag, maze, algorithm);
+    average_steps_qv = exp3.compute_average();
+
     for (int i=0; i<num_runs; i++){
         myfile << i << "   " << average_steps_sarsa[i] << "   " << average_steps_q_learning[i] << "   " <<  average_steps_double_q_learning[i] << "   " <<  average_steps_qv[i] << "\n";
     }
