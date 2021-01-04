@@ -61,18 +61,24 @@ int Experiment::single_run_QL(Agent &ag, Environment &env){
 
     int i=1;
     while (i){
-
+        //std::cout<<"s="<<s<<", a="<<a<<std::endl;
         rew = env.sample_reward(s);
         if (s == env.get_final_state()){
             ag.update_Q_final(s, a, rew);
             break;
         }
-
+       /* if (s == 21){
+            std::cout<<"available actions="<<std::endl;
+            for (std::vector<int>::const_iterator i = allow_act.begin(); i != allow_act.end(); ++i)
+                std::cout << *i << ' ';
+            std::cout<<std::endl;
+        }*/
         s_new = env.next_state(s, a);
         allow_act = env.allowed_actions(s_new);
-        a_new = ag.agent_step_epsilon_greedy(s_new, allow_act, 1);  // 1 == Q_LEARNING
-
         ag.update_Q_Learning(s, a, rew, s_new, allow_act);
+
+        a_new = ag.agent_step_epsilon_greedy(s_new, allow_act, 1);  // 1 == Q_LEARNING
+        
         a = a_new;
         s = s_new;       
         i += 1;
@@ -151,6 +157,7 @@ int Experiment::single_run_QV(Agent &ag, Environment &env){
 void Experiment::more_runs(Agent &ag, Environment &env, int experiment_number, int algorithm){
 
     for (int run_number=0; run_number<n_runs; run_number++){
+        //std::cout<<"\nRun number="<<run_number<<std::endl;
         if (algorithm == 0 ){
             num_steps_each_experiment[experiment_number*n_runs+run_number] = single_run_SARSA(ag, env);
         } else if (algorithm == 1 ){

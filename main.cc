@@ -2,20 +2,21 @@
 #include "Experiment.h"
 #include "Environment.h"
 #include <iostream>
+#include <fstream>
 
 #define N 8
 
 int main(){
 
-    double epsilon = 0.5;
+    double epsilon = 0.4;
     double learning_rate = 0.7;
     double discount_rate = 0.99;
     int n_actions = 4; // up, down, left, right
     int n_states = N*N;
     int starting_state = 56;
     int final_state = 7;
-    int num_runs = 1000;
-    int num_experiments = 1;
+    int num_runs = 600;
+    int num_experiments = 30;
     double lambda = 0.3;
     //double T = 10;
 
@@ -23,6 +24,10 @@ int main(){
         std::cout<<"Initial or final state outside the maze borders\n";
         return -1;
     }
+
+    std::ofstream myfile;
+    myfile.open ("data/data_N10_gradient_alpha01.txt");
+    myfile << "step   sarsa     q_learning     double_q_learning    qv_learning\n";
 
     // in this way I can define a new agent
     Agent ag(n_states, n_actions, epsilon, learning_rate, discount_rate, starting_state, lambda);
@@ -47,6 +52,8 @@ int main(){
     ag.print_Q();
 
     //exp.evaluation(ag, maze);
+
+    myfile.close();
 
     return 0;
 }

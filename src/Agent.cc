@@ -108,27 +108,29 @@ void Agent::update_Q_SARSA(int s, int a, double reward, int s_next, int a_next){
     Q[s*n_actions+a] += learning_rate*(reward + discount_rate*Q[s_next*n_actions + a_next] - Q[s*n_actions+a]);
 };
 
-void Agent::update_Q_Learning(int s, int a, double reward, int s_next, std::vector<int> allowed_actions) {
+void Agent::update_Q_Learning(int s, int a, double reward, int s_next, std::vector<int> allowed_actions_s_next) {
 
-	int maximizing_action = allowed_actions[0];
+	int maximizing_action = allowed_actions_s_next[0];
 	double max_val = Q[s*n_actions + maximizing_action];
+
 	for (int j = 0; j < n_actions; j++) {
-		if (std::find(allowed_actions.begin(), allowed_actions.end(), j) != allowed_actions.end()) {
-			//std::cout<<"action "<<j<<" is present in the actions array"<<std::endl;
-			if (Q[s*n_actions + j] > max_val) {
-				max_val = Q[s*n_actions + j];
+		if (std::find(allowed_actions_s_next.begin(), allowed_actions_s_next.end(), j) != allowed_actions_s_next.end()) {
+
+			if (Q[s_next*n_actions + j] > max_val) {
+				max_val = Q[s_next*n_actions + j];
 				maximizing_action = j;
 			}
 		}
 	}
-    //std::cout<<"update: Q[s*n_actions+a]="<<Q[s*n_actions+a]<<", Q[s_next*n_actions + maximizing_action]="<<Q[s_next*n_actions + maximizing_action]<<std::endl;
-
-	Q[s*n_actions+a] += learning_rate*(reward + discount_rate * Q[s_next*n_actions + maximizing_action] - Q[s*n_actions+a]);
+	Q[s*n_actions+a] += learning_rate*(reward + discount_rate*Q[s_next*n_actions + maximizing_action] - Q[s*n_actions+a]);
 };
 
 void Agent::update_Q_final(int s, int a, double reward){
     //std::cout<<"update: Q[s*n_actions+a]="<<Q[s*n_actions+a]<<", reward="<<reward<<std::endl;
-    Q[s*n_actions+a] += learning_rate*(reward - Q[s*n_actions+a]);
+    //for (int aa=0; aa<4; aa++){
+        //std::cout<<"s*n_actions+aa="<<s*n_actions+aa<<std::endl;
+        Q[s*n_actions+a] += learning_rate*(reward - Q[s*n_actions+a]);
+    //}
 };
 
 void Agent::update_QA_QB(int s, int a, double reward, int s_next, std::vector<int> allowed_actions, int update_index){

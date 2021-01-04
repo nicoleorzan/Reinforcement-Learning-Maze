@@ -113,6 +113,15 @@ void Environment::fill_maze(){
 			}
 		}
 	}
+    /*
+    for (int i=0; i<N; i++){
+        for (int j=0; j<N; j++){
+            maze[i*N+j] = 0;
+            if ((i==0 & j==0) || (i==1 & j==0) || (i==2 & j==0) || (i==1 & j==1) || (i==3 & j==2)){
+                maze[i*N+j] = 1;
+            }
+        }
+    }*/
 };
 
 int Environment::next_state(int state, int action){
