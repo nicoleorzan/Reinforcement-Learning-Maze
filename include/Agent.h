@@ -47,6 +47,10 @@ class Agent{
 
     void print_Q();
 
+    void print_QA();
+    
+    void print_QB();
+
     void initialize_Q();
 
     void initialize_QA_QB();

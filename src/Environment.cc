@@ -163,7 +163,7 @@ double Environment::sample_reward(int state){
 
     int reward = 0;
     if (state == final_state){
-        reward = 1;
+        reward = 100;
     }
 
     return reward;

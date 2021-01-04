@@ -91,14 +91,13 @@ int Experiment::single_run_double_QL(Agent &ag, Environment &env){
     int s = 0, s_new = 0;
     std::vector<int> allow_act;
     double rew = 0;
-    double randval = 0;
 
     s = ag.get_initial_state(); 
+    allow_act = env.allowed_actions(s);
 
     int i=1;
     while (i){
 
-        allow_act = env.allowed_actions(s);
         a = ag.agent_step_epsilon_greedy(s, allow_act, 1); // 1 == double Q leaning
         rew = env.sample_reward(s);
 
@@ -110,10 +109,16 @@ int Experiment::single_run_double_QL(Agent &ag, Environment &env){
         s_new = env.next_state(s, a);
         allow_act = env.allowed_actions(s_new);
 
-        randval = ((double) rand() / (RAND_MAX));
-        if (randval < 0.5){
+        if (((double) rand() / (RAND_MAX)) < 0.5){
+            if (s==22|| s==14 || s==15 || s == 7){
+                std::cout<<"choose QA"<<std::endl;
+            }
             ag.update_QA_QB(s, a, rew, s_new, allow_act, 0); // 0 == QA
-        } else { ag.update_QA_QB(s, a, rew, s_new, allow_act, 1); // 1 == QB
+        } else { 
+            if (s==22|| s==14 || s==15 || s == 7){
+                std::cout<<"choose QB"<<std::endl;
+            }
+            ag.update_QA_QB(s, a, rew, s_new, allow_act, 1); // 1 == QB
         }
         
         s = s_new;       
@@ -190,7 +195,7 @@ void Experiment::more_experiments(Agent &ag, Environment &env, int algorithm){
     }
 };
 
-void Experiment::compute_average(){
+int* Experiment::compute_average(){
 
     std::cout<<"Computing the average of the steps the agent needs to find the final block. \nAverage is computed on the group of "<<n_experiments<<" experiments.\n\n";
     for (int i=0; i<n_runs; i++){
@@ -201,6 +206,7 @@ void Experiment::compute_average(){
         average_steps[i] = average_steps[i]/n_experiments;
         std::cout<<"average steps of run number "<<i<<"= "<<average_steps[i]<<std::endl;
     }
+    return average_steps;
 };
 
 void Experiment::evaluation_SARSA(Agent &ag, Environment &env, int algorithm){

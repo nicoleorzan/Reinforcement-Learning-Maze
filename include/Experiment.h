@@ -32,7 +32,7 @@ class Experiment{
 
     void evaluation_SARSA(Agent &ag, Environment & env, int algorithm);
 
-    void compute_average();
+    int* compute_average();
 
 
     //void single_run_Boltzmann(Agent &ag, Environment & env, double T);
