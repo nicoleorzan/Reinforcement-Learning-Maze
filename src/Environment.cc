@@ -60,6 +60,7 @@ void Environment::display_maze() {
 		}
 		printf("\n");
 	}
+    printf("\n");
 };
 
 std::vector<int> Environment::allowed_actions(int state){
@@ -96,7 +97,7 @@ void Environment::fill_maze(){
         }
     }*/
 
-    /*for (int i = 0; i < N; i++) {
+    for (int i = 0; i < N; i++) {
 		for (int j = 0; j < N; j++) {
 			maze[i*N + j] = 0;
 			if ((i == 0 & j == 0) || (i == 0 & j == 1) || (i == 0 & j == 2) || (i == 0 & j == 3) || (i == 0 & j == 4) || (i == 0 & j == 5)
@@ -113,7 +114,7 @@ void Environment::fill_maze(){
 			}
 		}
 	}
-    */
+    /*
     for (int i=0; i<N; i++){
         for (int j=0; j<N; j++){
             maze[i*N+j] = 0;
@@ -122,6 +123,7 @@ void Environment::fill_maze(){
             }
         }
     }
+    */
 };
 
 int Environment::next_state(int state, int action){
