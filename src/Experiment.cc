@@ -87,6 +87,7 @@ int Experiment::single_run_QL(Agent &ag, Environment &env){
 };
 
 int Experiment::single_run_double_QL(Agent &ag, Environment &env){
+
     int a = 0;
     int s = 0, s_new = 0;
     std::vector<int> allow_act;
@@ -109,15 +110,9 @@ int Experiment::single_run_double_QL(Agent &ag, Environment &env){
         s_new = env.next_state(s, a);
         allow_act = env.allowed_actions(s_new);
 
-        if (((double) rand() / (RAND_MAX)) < 0.5){
-            if (s==22|| s==14 || s==15 || s == 7){
-                std::cout<<"choose QA"<<std::endl;
-            }
+        if ( ((double) rand() / (RAND_MAX)) < 0.5){
             ag.update_QA_QB(s, a, rew, s_new, allow_act, 0); // 0 == QA
         } else { 
-            if (s==22|| s==14 || s==15 || s == 7){
-                std::cout<<"choose QB"<<std::endl;
-            }
             ag.update_QA_QB(s, a, rew, s_new, allow_act, 1); // 1 == QB
         }
         
@@ -129,6 +124,7 @@ int Experiment::single_run_double_QL(Agent &ag, Environment &env){
 };
 
 int Experiment::single_run_QV(Agent &ag, Environment &env){
+
     int a = 0;
     int s = 0, s_new = 0;
     std::vector<int> allow_act;
@@ -162,7 +158,7 @@ int Experiment::single_run_QV(Agent &ag, Environment &env){
 void Experiment::more_runs(Agent &ag, Environment &env, int experiment_number, int algorithm){
 
     for (int run_number=0; run_number<n_runs; run_number++){
-        //std::cout<<"\nRun number="<<run_number<<std::endl;
+        //std::cout<<"Run number="<<run_number<<std::endl;
         if (algorithm == 0 ){
             num_steps_each_experiment[experiment_number*n_runs+run_number] = single_run_SARSA(ag, env);
         } else if (algorithm == 1 ){
