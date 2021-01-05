@@ -33,22 +33,16 @@ int main(){
     myfile.open ("data.txt");
     myfile << "Run   sarsa   q_learning   double_q_learning   qv_learning\n";
 
-    // in this way I can define a new agent
-    Agent ag(n_states, n_actions, epsilon, learning_rate, discount_rate, starting_state, lambda);
-
     // Define the maze
     Environment maze(N, starting_state, final_state);
     maze.display_maze();
 
-    // Run the experiment (agent acts on the maze, maze gives back next state and reward, and loop goes on)
-    //Experiment exp(num_runs, num_experiments);
 
-    // =============== RUN SARSA ================
-    //exp.single_run_SARSA(ag, maze);
-    //exp.more_runs(ag, maze, 0);
+    // =============== RUN SARSA ===================
     std::cout<<"\n===> RUNNING SARSA"<<std::endl;
     int algorithm = 0; // algorithm number: 0=SARSA, 1=Q_learning, 2=double Q_learning, 3=QV
     
+    Agent ag(n_states, n_actions, epsilon, learning_rate, discount_rate, starting_state, lambda);
     Experiment exp(num_runs, num_experiments);
     exp.more_experiments(ag, maze, algorithm);
     average_steps_sarsa = exp.compute_average();
@@ -57,8 +51,9 @@ int main(){
     std::cout<<"\n===> RUNNING Q LEARNING"<<std::endl;
     algorithm = 1;
     
+    Agent ag1(n_states, n_actions, epsilon, learning_rate, discount_rate, starting_state, lambda);
     Experiment exp1(num_runs, num_experiments);
-    exp1.more_experiments(ag, maze, algorithm);
+    exp1.more_experiments(ag1, maze, algorithm);
     average_steps_q_learning = exp1.compute_average();
     
 
@@ -66,8 +61,9 @@ int main(){
     std::cout<<"\n===> RUNNING DOUBLE Q LEARNING"<<std::endl;
     algorithm = 2;
     
+    Agent ag2(n_states, n_actions, epsilon, learning_rate, discount_rate, starting_state, lambda);
     Experiment exp2(num_runs, num_experiments);
-    exp2.more_experiments(ag, maze, algorithm);
+    exp2.more_experiments(ag2, maze, algorithm);
     average_steps_double_q_learning = exp2.compute_average();
 
     ag.print_QA();
@@ -79,8 +75,9 @@ int main(){
     std::cout<<"\n===> RUNNING QV LEARNING"<<std::endl;
     algorithm = 3;
 
+    Agent ag3(n_states, n_actions, epsilon, learning_rate, discount_rate, starting_state, lambda);
     Experiment exp3(num_runs, num_experiments);
-    exp3.more_experiments(ag, maze, algorithm);
+    exp3.more_experiments(ag3, maze, algorithm);
     average_steps_qv = exp3.compute_average();
     
 
@@ -88,7 +85,27 @@ int main(){
         myfile << i << "   " << average_steps_sarsa[i] << "   " << average_steps_q_learning[i] << "   " <<  average_steps_double_q_learning[i] << "   " <<  average_steps_qv[i] << "\n";
     }
 
-    //exp.evaluation(ag, maze);
+    // ===============================================
+    // ================= EVALUATION ==================
+    // ===============================================
+
+
+    std::cout<<"\n===> EVALUATION OF SARSA"<<std::endl;
+    algorithm = 0;
+    epsilon = 0;
+    exp.evaluation(ag, maze, epsilon, algorithm);
+
+    std::cout<<"\n===> EVALUATION OF Q LEARNING"<<std::endl;
+    algorithm = 1;
+    exp1.evaluation(ag1, maze, epsilon, algorithm);
+
+    std::cout<<"\n===> EVALUATION OF DOUBLE Q LEARNING"<<std::endl;
+    algorithm = 2;
+    exp2.evaluation(ag2, maze, epsilon, algorithm);
+
+    std::cout<<"\n===> EVALUATION OF QV LEARNING"<<std::endl;
+    algorithm = 3;
+    exp3.evaluation(ag3, maze, epsilon, algorithm);
 
     myfile.close();
     delete[] average_steps_sarsa;

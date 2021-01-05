@@ -41,7 +41,11 @@ Agent::~Agent(){
 
 int Agent::get_initial_state(){
     return starting_state;
-}
+};
+
+void Agent::agent_set_epsilon(double e){
+    epsilon = e;
+};
 
 int Agent::agent_step_epsilon_greedy(int state, std::vector<int> allowed_actions, int algorithm){
     int act = 0;

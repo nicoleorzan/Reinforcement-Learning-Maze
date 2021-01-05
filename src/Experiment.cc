@@ -205,32 +205,35 @@ int* Experiment::compute_average(){
     return average_steps;
 };
 
-void Experiment::evaluation_SARSA(Agent &ag, Environment &env, int algorithm){
+void Experiment::evaluation(Agent &ag, Environment &env, double epsilon, int algorithm){
 
-    std::cout<<"\nEvaluation of the learnt policy"<<std::endl;
+    std::cout<<"\nEvaluation of the learnt policy with exploration rate of "<<epsilon<<std::endl;
     int s = 0, a = 0;
     std::vector<int> allow_act;
 
-    s = ag.get_initial_state();
-    allow_act = env.allowed_actions(s);
-    a = ag.agent_step_epsilon_greedy(s, allow_act, 0); 
-    std::cout<<"s="<<s<<", a="<<a<<std::endl;  
+    ag.agent_set_epsilon(epsilon);
+
+    s = ag.get_initial_state();  
+
     int i=1;
     while (i){
+
+        allow_act = env.allowed_actions(s);
+        a = ag.agent_step_epsilon_greedy(s, allow_act, algorithm); 
+        std::cout<<"s="<<s<<", a="<<a<<std::endl; 
 
         if (s == env.get_final_state()){
             break;
         }
         s = env.next_state(s, a);
-        allow_act = env.allowed_actions(s);
-        a = ag.agent_step_epsilon_greedy(s, allow_act, 0);     
 
-        std::cout<<"s="<<s<<", a="<<a<<std::endl;    
         i += 1;
     }
     std::cout<<"final number of steps="<<i<<std::endl;
 
 };
+
+
 
 /*void Experiment::single_run_Boltzmann(Agent &ag, Environment &env, double T){
 

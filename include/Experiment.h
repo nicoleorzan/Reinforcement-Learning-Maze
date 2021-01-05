@@ -29,11 +29,11 @@ class Experiment{
     void more_runs(Agent &ag, Environment & env, int experiment_number, int algorithm);
 
     void more_experiments(Agent &ag, Environment & env, int algorithm);
-
-    void evaluation_SARSA(Agent &ag, Environment & env, int algorithm);
-
+    
     int* compute_average();
 
+
+    void evaluation(Agent &ag, Environment & env, double epsilon, int algorithm);
 
     //void single_run_Boltzmann(Agent &ag, Environment & env, double T);
 

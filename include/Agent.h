@@ -28,6 +28,8 @@ class Agent{
 
     int get_initial_state();
 
+    void agent_set_epsilon(double e);
+
     int agent_step_epsilon_greedy(int state, std::vector<int> allowed_actions, int algorithm);
 
     void update_Q_SARSA(int s, int a, double reward, int s_next, int a_next);
@@ -48,7 +50,7 @@ class Agent{
     void print_Q();
 
     void print_QA();
-    
+
     void print_QB();
 
     void initialize_Q();
