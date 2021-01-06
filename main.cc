@@ -6,16 +6,19 @@
 
 #define N 8
 
+#define TCPU_TIME (clock_gettime( CLOCK_PROCESS_CPUTIME_ID, &ts ), (double)ts.tv_sec +	\
+		   (double)ts.tv_nsec * 1e-9)
+
 int main(){
 
-    double epsilon = 0.7;
-    double learning_rate = 0.7;
+    double epsilon = 0.6;
+    double learning_rate = 0.1;
     double discount_rate = 0.99;
     int n_actions = 4; // up, down, left, right
     int n_states = N*N;
     int starting_state = 56;
     int final_state = 7;
-    int num_runs = 100;
+    int num_runs = 2000;
     int num_experiments = 1;
     double lambda = 0.3;
     int* average_steps_sarsa = new int[num_runs];
@@ -23,7 +26,11 @@ int main(){
     int* average_steps_double_q_learning = new int[num_runs];
     int* average_steps_qv = new int[num_runs];
     double c = 0.01;
-    double T = 1.;
+    double T = 0.5;
+
+    // timing-related variables
+    double          tstart, tstop, ctime;
+    struct timespec ts;
 
     if (starting_state < 0 || starting_state >= N*N || final_state < 0 || final_state >= N*N ){
         std::cout<<"Initial or final state outside the maze borders\n";
@@ -48,8 +55,8 @@ int main(){
     exp.run_more_experiments(ag, maze, algorithm, exploraton_strategy);
     average_steps_sarsa = exp.compute_average();
 
-    ag.print(ag.get_Q(), n_states, n_actions);
-    std::cout<<"Printing final policy obtained from SARSA"<<std::endl;
+    //ag.print(ag.get_Q(), n_states, n_actions);
+    std::cout<<"\nPrinting final policy obtained from SARSA:"<<std::endl;
     maze.print_policy(ag.get_Q());
  
     // =============== RUN Q LEARNING ================
@@ -61,8 +68,8 @@ int main(){
     exp1.run_more_experiments(ag1, maze, algorithm, exploraton_strategy);
     average_steps_q_learning = exp1.compute_average();  
 
-    ag1.print(ag1.get_Q(), n_states, n_actions);    
-    std::cout<<"Printing final policy obtained from Q learning"<<std::endl;
+    //ag1.print(ag1.get_Q(), n_states, n_actions);    
+    std::cout<<"\nPrinting final policy obtained from Q learning:"<<std::endl;
     maze.print_policy(ag1.get_Q());  
     
     // =============== RUN DOUBLE Q LEARNING ================
@@ -74,13 +81,13 @@ int main(){
     exp2.run_more_experiments(ag2, maze, algorithm, exploraton_strategy);
     average_steps_double_q_learning = exp2.compute_average();
 
-    ag2.print(ag2.get_QA(), n_states, n_actions);
+    /*ag2.print(ag2.get_QA(), n_states, n_actions);
     std::cout<<std::endl;
     ag2.print(ag2.get_QB(), n_states, n_actions);
-
-    std::cout<<"Printing final policy obtained from double Q learning (QA)"<<std::endl;
+    */
+    std::cout<<"\nPrinting final policy obtained from double Q learning (QA):"<<std::endl;
     maze.print_policy(ag2.get_QA());
-    std::cout<<"Printing final policy obtained from double Q learning (QB)"<<std::endl;
+    std::cout<<"\nPrinting final policy obtained from double Q learning (QB):"<<std::endl;
     maze.print_policy(ag2.get_QB());
 
     // =============== RUN QV LEARNING ================
@@ -92,13 +99,14 @@ int main(){
     exp3.run_more_experiments(ag3, maze, algorithm, exploraton_strategy);
     average_steps_qv = exp3.compute_average();
 
-    ag3.print(ag3.get_Q(), n_states, n_actions);
-    std::cout<<"Printing final policy obtained from QV learning"<<std::endl;
+    //ag3.print(ag3.get_Q(), n_states, n_actions);
+    std::cout<<"\nPrinting final policy obtained from QV learning:"<<std::endl;
     maze.print_policy(ag3.get_Q());
 
-
-
+    // ===============================================
     // ================= FILLING FILE ================
+    // ===============================================
+
 
     for (int i=0; i<num_runs; i++){
         myfile << i << "   " << average_steps_sarsa[i] << "   " << average_steps_q_learning[i] << "   " <<  average_steps_double_q_learning[i] << "   " <<  average_steps_qv[i] << "\n";
@@ -108,36 +116,54 @@ int main(){
     // ================= EVALUATION ==================
     // ===============================================
 
-
-    /*std::cout<<"\n===> EVALUATION OF SARSA"<<std::endl;
-    algorithm = 0;
+    std::cout<<"Performing evaluation with greedy policy with starting state:"<<starting_state<<std::endl;
     epsilon = 0;
-    exp.evaluation(ag, maze, epsilon, algorithm);
+
+    std::cout<<"\n===> EVALUATION OF SARSA"<<std::endl;
+    algorithm = 0;
+    exp.evaluation(ag, maze, epsilon, algorithm, starting_state);
 
     std::cout<<"\n===> EVALUATION OF Q LEARNING"<<std::endl;
     algorithm = 1;
-    exp1.evaluation(ag1, maze, epsilon, algorithm);
+    exp1.evaluation(ag1, maze, epsilon, algorithm, starting_state);
 
     std::cout<<"\n===> EVALUATION OF DOUBLE Q LEARNING"<<std::endl;
     algorithm = 2;
-    exp2.evaluation(ag2, maze, epsilon, algorithm);
+    exp2.evaluation(ag2, maze, epsilon, algorithm, starting_state);
 
     std::cout<<"\n===> EVALUATION OF QV LEARNING"<<std::endl;
     algorithm = 3;
-    exp3.evaluation(ag3, maze, epsilon, algorithm);*/
+    exp3.evaluation(ag3, maze, epsilon, algorithm, starting_state);
+
+
+    //==============================================================================
+    //==============================================================================
+    //==============================================================================
+    
+    std::cout<<"\n======================\nTrying Boltzmann exploration\n======================\n"<<std::endl;
+    // =============== RUN SARSA ===================
+    std::cout<<"\n===> RUNNING SARSA"<<std::endl;
+    num_runs = 100;
+    algorithm = 0; // algorithm number: 0=SARSA, 1=Q_learning, 2=double Q_learning, 3=QV
+    exploraton_strategy = 1; // 0=epsilon-greedy; 1=boltzmann, 2=UCB
+    T = 0.5;
+    
+    ag.initialize_Q();
+    //Agent ag(n_states, n_actions, epsilon, learning_rate, discount_rate, starting_state, lambda);
+    Experiment exp_new_1(num_runs, num_experiments, T, c);
+
+    tstart = TCPU_TIME;
+    exp_new_1.run_more_experiments(ag, maze, algorithm, exploraton_strategy);
+    ctime = TCPU_TIME - tstart;
+    std::cout<<"time="<<ctime<<std::endl;
+    average_steps_sarsa = exp.compute_average();
+
+    //ag.print(ag.get_Q(), n_states, n_actions);
+    std::cout<<"\nPrinting final policy obtained from SARSA:"<<std::endl;
+    maze.print_policy(ag.get_Q());
 
 
 
-    // ====================== RADNOM EXPERIMENTS =====================
-    /*num_experiments = 1;
-    num_runs = 1;
-    int num_steps = 50000;
-    learning_rate = 0.2;
-
-    epsilon = 0.2;
-    Agent ag_random(n_states, n_actions, epsilon, learning_rate, discount_rate, starting_state, lambda);
-    Experiment exp_random(num_runs, num_experiments, T, c);
-    exp_random.single_run_SARSA_random(ag_random, maze, num_steps);*/
 
     myfile.close();
     delete[] average_steps_sarsa;

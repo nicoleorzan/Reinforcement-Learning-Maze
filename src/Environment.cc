@@ -30,10 +30,9 @@ Environment::~Environment(){
 int Environment::random_start(){
     //srand (time(NULL));
     int randval = rand() % N*N;
-    //std::cout<<"randval="<<randval<<std::endl;
+
     while ( maze[randval] == 1 ){
         randval = rand() % N*N;
-        // /std::cout<<"in randval="<<randval<<std::endl;
     }
     initial_state = randval;
     return randval;
@@ -55,7 +54,6 @@ int Environment::get_final_state(){
 
 void Environment::display_maze() {
 	for (int i = 0; i < N; i++) {
-		//std::cout<<i*N<<"  ";
 		for (int j = 0; j < N; j++) {
 			if ((i*N + j) == initial_state) {
 				printf("▶ ");
@@ -177,7 +175,7 @@ double Environment::sample_reward(int state){
 
     int reward = 0;
     if (state == final_state){
-        reward = 100;
+        reward = 1;
     }
 
     return reward;
@@ -189,12 +187,8 @@ void Environment::print_policy(double *Q){
     double max_idx;
 
     for (int i = 0; i < N; i++) {
-		//std::cout<<i*N<<"  ";
 		for (int j = 0; j < N; j++) {
-            if ((i*N + j) == initial_state) {
-				printf("▶ ");
-			}
-			else if ((i*N + j) == final_state) {
+            if ((i*N + j) == final_state) {
 				printf("◎ ");
 			}
             else if (maze[i*N + j] == 1) {

@@ -36,16 +36,7 @@ class Experiment{
     int* compute_average();
 
 
-    void evaluation(Agent &ag, Environment & env, double epsilon, int algorithm);
-
-    void single_run_SARSA_random(Agent &ag, Environment & env, int num_steps);
-
-    void single_run_QL_random(Agent &ag, Environment & env, int num_steps);
-
-
-    //void single_run_Boltzmann(Agent &ag, Environment & env, double T);
-
-    //void more_Boltzmann_exploration_runs(Agent &ag, Environment & env, double T);
+    void evaluation(Agent &ag, Environment & env, double epsilon, int algorithm, int starting_state);
 };
 
 #endif

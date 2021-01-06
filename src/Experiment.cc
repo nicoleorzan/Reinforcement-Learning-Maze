@@ -25,8 +25,12 @@ int Experiment::single_run_SARSA(Agent &ag, Environment &env, int exploration_st
     std::vector<int> allow_act;
     double rew = 0;
 
-    s = ag.get_initial_state();
+    //s = ag.get_initial_state();
+
+    s = env.random_start();
+    ag.set_initial_state(s);
     allow_act = env.allowed_actions(s);
+    
     if (exploration_strategy==0){
         a = ag.epsilon_greedy(s, allow_act, 0);  // 0 == SARSA
     } else if (exploration_strategy == 1){
@@ -71,7 +75,9 @@ int Experiment::single_run_QL(Agent &ag, Environment &env, int exploration_strat
     std::vector<int> allow_act;
     double rew = 0;
 
-    s = ag.get_initial_state();
+    //s = ag.get_initial_state();
+    s = env.random_start();
+    ag.set_initial_state(s);
     allow_act = env.allowed_actions(s);
 
     int i=1;
@@ -109,7 +115,9 @@ int Experiment::single_run_double_QL(Agent &ag, Environment &env, int exploratio
     std::vector<int> allow_act;
     double rew = 0;
 
-    s = ag.get_initial_state(); 
+    //s = ag.get_initial_state(); 
+    s = env.random_start();
+    ag.set_initial_state(s);
     allow_act = env.allowed_actions(s);
 
     int i=1;
@@ -152,7 +160,9 @@ int Experiment::single_run_QV(Agent &ag, Environment &env, int exploration_strat
     std::vector<int> allow_act;
     double rew = 0;
 
-    s = ag.get_initial_state(); 
+    //s = ag.get_initial_state(); 
+    s = env.random_start();
+    ag.set_initial_state(s);
 
     int i=1;
     while (i){
@@ -229,12 +239,12 @@ int* Experiment::compute_average(){
             average_steps[i] += num_steps_each_experiment[j*n_runs+i]; // CONTROLLARE QUI
         }
         average_steps[i] = average_steps[i]/n_experiments;
-        std::cout<<"average steps of run number "<<i<<"= "<<average_steps[i]<<std::endl;
+        //std::cout<<"average steps of run number "<<i<<"= "<<average_steps[i]<<std::endl;
     }
     return average_steps;
 };
 
-void Experiment::evaluation(Agent &ag, Environment &env, double epsilon, int algorithm){
+void Experiment::evaluation(Agent &ag, Environment &env, double epsilon, int algorithm, int starting_state){
 
     std::cout<<"\nEvaluation of the learnt policy with exploration rate of "<<epsilon<<std::endl;
     int s = 0, a = 0;
@@ -242,14 +252,15 @@ void Experiment::evaluation(Agent &ag, Environment &env, double epsilon, int alg
 
     ag.set_epsilon(epsilon);
 
-    s = ag.get_initial_state();  
+    ag.set_initial_state(starting_state);
+    s = starting_state;
 
     int i=1;
     while (i){
 
         allow_act = env.allowed_actions(s);
         a = ag.epsilon_greedy(s, allow_act, algorithm); 
-        std::cout<<"s="<<s<<", a="<<a<<std::endl; 
+        //std::cout<<"s="<<s<<", a="<<a<<std::endl; 
 
         if (s == env.get_final_state()){
             break;
@@ -258,133 +269,6 @@ void Experiment::evaluation(Agent &ag, Environment &env, double epsilon, int alg
 
         i += 1;
     }
-    std::cout<<"final number of steps="<<i<<std::endl;
+    std::cout<<"final number of steps="<<i-1<<std::endl;
 
 };
-
-void Experiment::single_run_SARSA_random(Agent &ag, Environment &env, int num_steps){
-
-    int a = 0, a_new = 0;
-    int s = 0, s_new = 0;
-    std::vector<int> allow_act;
-    double rew = 0;
-
-    int n = 0;
-    int i = 1;
-    int count_goals = 0;
-    while (n < num_steps){
-
-        s = env.random_start();
-        //std::cout<<"new run from starting state "<<s<<std::endl;
-        ag.set_initial_state(s);
-        allow_act = env.allowed_actions(s);
-        a = ag.epsilon_greedy(s, allow_act, 0);  // 0 == SARSA
-
-        i=1;
-        while (i){
-
-            rew = env.sample_reward(s);
-            if (s == env.get_final_state()){
-                ag.update_Q_final(s, a, rew);
-                count_goals += 1;
-                break;
-            }
-
-            s_new = env.next_state(s, a);
-            allow_act = env.allowed_actions(s_new);
-            a_new = ag.epsilon_greedy(s_new, allow_act, 0);  // 0 == SARSA
-
-            ag.update_Q_SARSA(s, a, rew, s_new, a_new);
-            a = a_new;
-            s = s_new;       
-            i += 1;
-            n += 1;
-        }
-    }
-    //std::cout<<"num goals obtained = "<<count_goals<<std::endl;
-};
-
-void Experiment::single_run_QL_random(Agent &ag, Environment &env, int num_steps){
-
-    int a = 0, a_new = 0;
-    int s = 0, s_new = 0;
-    std::vector<int> allow_act;
-    double rew = 0;
-
-    int n = 0;
-    int i = 1;
-    int count_goals = 0;
-    while (n < num_steps){
-
-        s = env.random_start();
-        ag.set_initial_state(s);
-        allow_act = env.allowed_actions(s);
-        a = ag.epsilon_greedy(s, allow_act, 1);  // 1 == Q_LEARNING
-
-        i=1;
-        while (i){
-
-            rew = env.sample_reward(s);
-            if (s == env.get_final_state()){
-                ag.update_Q_final(s, a, rew);
-                count_goals += 1;
-
-                break;
-            }
-
-            s_new = env.next_state(s, a);
-            allow_act = env.allowed_actions(s_new);
-            ag.update_Q_Learning(s, a, rew, s_new, allow_act);
-
-            a_new = ag.epsilon_greedy(s_new, allow_act, 1);  // 1 == Q_LEARNING
-            
-            a = a_new;
-            s = s_new;       
-            i += 1;
-            n += 1;
-        }
-    }
-};
-
-
-/*void Experiment::single_run_Boltzmann(Agent &ag, Environment &env, double T){
-
-    int a = 0, a_new = 0;
-    int s = 0, s_new = 0;
-    std::vector<int> allow_act;
-    double rew = 0;
-
-    s = ag.get_initial_state();
-    //std::cout<<"initial state="<<s<<std::endl; 
-    allow_act = env.allowed_actions(s);
-    
-    a = ag.agent_Boltzmann_exploration(s, allow_act, T);  
-    //std::cout<<"chosen initial action="<<a<<std::endl;
-    int i=1;
-    while (i){
-
-        rew = env.sample_reward(s);
-        if (s == env.get_final_state()){
-            //std::cout<<"s="<<s<<std::endl;
-            ag.Update_Q_final(s, a, rew);
-            break;
-        }
-
-        s_new = env.next_state(s, a);
-        //std::cout<<"s="<<s_new<<std::endl; 
-        allow_act = env.allowed_actions(s_new);
-        a_new = ag.agent_Boltzmann_exploration(s, allow_act, T); 
-        ag.SARSA(s, a, rew, s_new, a_new);
-        a = a_new;
-        s = s_new;       
-        i += 1;
-        //std::cout<<"chosen action="<<a<<std::endl;
-    }
-};
-
-void Experiment::more_Boltzmann_exploration_runs(Agent &ag, Environment &env, double T){
-
-    for (int run_number=0; run_number<n_runs; run_number++){
-        this->single_run_Boltzmann(ag, env, T);
-    }
-};*/
