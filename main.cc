@@ -49,6 +49,7 @@ int main(){
     average_steps_sarsa = exp.compute_average();
 
     ag.print(ag.get_Q(), n_states, n_actions);
+    std::cout<<"Printing final policy obtained from SARSA"<<std::endl;
     maze.print_policy(ag.get_Q());
  
     // =============== RUN Q LEARNING ================
@@ -60,7 +61,8 @@ int main(){
     exp1.run_more_experiments(ag1, maze, algorithm, exploraton_strategy);
     average_steps_q_learning = exp1.compute_average();  
 
-    ag1.print(ag1.get_Q(), n_states, n_actions);
+    ag1.print(ag1.get_Q(), n_states, n_actions);    
+    std::cout<<"Printing final policy obtained from Q learning"<<std::endl;
     maze.print_policy(ag1.get_Q());  
     
     // =============== RUN DOUBLE Q LEARNING ================
@@ -76,7 +78,10 @@ int main(){
     std::cout<<std::endl;
     ag2.print(ag2.get_QB(), n_states, n_actions);
 
+    std::cout<<"Printing final policy obtained from double Q learning (QA)"<<std::endl;
     maze.print_policy(ag2.get_QA());
+    std::cout<<"Printing final policy obtained from double Q learning (QB)"<<std::endl;
+    maze.print_policy(ag2.get_QB());
 
     // =============== RUN QV LEARNING ================
     std::cout<<"\n===> RUNNING QV LEARNING"<<std::endl;
@@ -88,7 +93,7 @@ int main(){
     average_steps_qv = exp3.compute_average();
 
     ag3.print(ag3.get_Q(), n_states, n_actions);
-
+    std::cout<<"Printing final policy obtained from QV learning"<<std::endl;
     maze.print_policy(ag3.get_Q());
 
 

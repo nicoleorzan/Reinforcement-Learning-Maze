@@ -183,7 +183,7 @@ int Agent::UCB(int state, std::vector<int> allowed_actions, int algorithm, int t
     act = std::distance(UCB_values + state*n_actions, std::max_element(UCB_values + state*n_actions, UCB_values + state*n_actions + n_actions));
 
     std::cout<<"chosen action="<<act<<std::endl;
-    
+
     nt[state*n_actions+act] += 1;
 
     return act;
@@ -239,10 +239,6 @@ void Agent::update_QA_QB(int s, int a, double reward, int s_next, std::vector<in
 	int maximizing_action = allowed_actions[0];
     double max_val;
 
-    //if (s==22|| s==14 || s==15 || s == 7){
-        //std::cout<<"s="<<s<<", a="<<a<<", s_next="<<s_next<<std::endl;
-    //}
-
     if (update_index == 0){  // 0 == QA
     	max_val = QA[s_next*n_actions + allowed_actions[0]];
     } else if (update_index == 1){  // 1 == QB
@@ -251,7 +247,6 @@ void Agent::update_QA_QB(int s, int a, double reward, int s_next, std::vector<in
 
 	for (int j = 0; j < n_actions; j++) {
 		if (std::find(allowed_actions.begin(), allowed_actions.end(), j) != allowed_actions.end()) {
-			//std::cout<<"action "<<j<<" is present in the actions array"<<std::endl;
             if (update_index == 0){  // 0 == QA
                 if (QA[s_next*n_actions + j] > max_val) {
                     max_val = QA[s_next*n_actions + j];
@@ -265,33 +260,17 @@ void Agent::update_QA_QB(int s, int a, double reward, int s_next, std::vector<in
             }
 	    }
     }
-    //if (s==22|| s==14 || s==15 || s == 7){
-        /*std::cout<<"maximizing action in s_next="<<maximizing_action<<std::endl;
-        std::cout<<"QA[s*n_actions + a]="<<QA[s*n_actions + a]<<std::endl;
-        std::cout<<"QB[s*n_actions + a]="<<QB[s*n_actions + a]<<std::endl;
-        std::cout<<"QA[s_next*n_actions + maximizing_action]="<<QA[s_next*n_actions + maximizing_action]<<std::endl;
-        std::cout<<"QB[s_next*n_actions + maximizing_action]="<<QB[s_next*n_actions + maximizing_action]<<std::endl;
-        std::cout<<"proceed with update..."<<std::endl;*/
-    //}
 
     if (update_index == 0){  // 1 == QA
 	    QA[s*n_actions + a] += learning_rate * (reward + discount_rate*QB[s_next*n_actions + maximizing_action] - QA[s*n_actions + a]);
     } else if (update_index == 1){  // 1 == QB
         QB[s*n_actions + a] += learning_rate * (reward + discount_rate*QA[s_next*n_actions + maximizing_action] - QB[s*n_actions + a]);
     }
-    //if (s==22|| s==14 || s==15 || s == 7){
-    /*    std::cout<<"...done"<<std::endl;
-        std::cout<<"QA[s*n_actions + a]="<<QA[s*n_actions + a]<<std::endl;
-        std::cout<<"QB[s*n_actions + a]="<<QB[s*n_actions + a]<<std::endl;
-        std::cout<<std::endl;*/
-    //}
 };
 
 void Agent::update_QA_QB_final(int s, int a, double reward){
-    for (int aa=0; aa<4; aa++){
-        QA[s*n_actions+aa] += learning_rate*(reward - QA[s*n_actions+aa]);
-        QB[s*n_actions+aa] += learning_rate*(reward - QB[s*n_actions+aa]);
-    }
+        QA[s*n_actions+a] += learning_rate*(reward - QA[s*n_actions+a]);
+        QB[s*n_actions+a] += learning_rate*(reward - QB[s*n_actions+a]);
 };
 
 

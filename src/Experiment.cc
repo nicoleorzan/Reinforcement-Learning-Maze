@@ -66,7 +66,7 @@ int Experiment::single_run_SARSA(Agent &ag, Environment &env, int exploration_st
 
 int Experiment::single_run_QL(Agent &ag, Environment &env, int exploration_strategy){
 
-    int a = 0, a_new = 0;
+    int a = 0;
     int s = 0, s_new = 0;
     std::vector<int> allow_act;
     double rew = 0;
