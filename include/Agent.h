@@ -20,7 +20,9 @@ class Agent{
         double *et;
         double *QA;
         double *QB;
-        //double *Q_temperature;
+        double *Q_temperature;
+        double *UCB_values;
+        int *nt;
 
     Agent(int n_stat, int n_act, double e, double l, double d, int s, int lam);
 
@@ -28,9 +30,15 @@ class Agent{
 
     int get_initial_state();
 
-    void agent_set_epsilon(double e);
+    void set_initial_state(int s);
 
-    int agent_step_epsilon_greedy(int state, std::vector<int> allowed_actions, int algorithm);
+    void set_epsilon(double e);
+
+    int epsilon_greedy(int state, std::vector<int> allowed_actions, int algorithm);
+
+    int boltzmann_exploration(int state, std::vector<int> allowed_actions, int algorithm, double T);
+    
+    int UCB(int state, std::vector<int> allowed_actions, int algorithm, int t, double c);
 
     void update_Q_SARSA(int s, int a, double reward, int s_next, int a_next);
 
@@ -46,12 +54,13 @@ class Agent{
     
     void update_QV_final(int s, int a, double reward);
 
+    double* get_Q();
 
-    void print_Q();
+    double* get_QA();
 
-    void print_QA();
+    double* get_QB();
 
-    void print_QB();
+    void print(double *matrix, int n_rows, int n_cols);
 
     void initialize_Q();
 
@@ -59,7 +68,6 @@ class Agent{
 
     void initialize_V();
 
-    //int agent_Boltzmann_exploration(int state, std::vector<int> allowed_actions, double T);
 };
 
 #endif

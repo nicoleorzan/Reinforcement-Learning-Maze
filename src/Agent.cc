@@ -17,16 +17,21 @@ Agent::Agent(int n_stat, int n_act, double e, double l, double d, int s, int lam
     et = new double[n_states];
     QA = new double[n_states*n_actions];
     QB = new double[n_states*n_actions];
-    //Q_temperature = new double[n_states*n_actions];
-    for (int i=0; i<n_states*n_actions; i++){
-        Q[i] = 0;
-        QA[i] = 0;
-        QB[i] = 0;
-        //Q_temperature[i] = 0;
-    }
+    Q_temperature = new double[n_states*n_actions];
+    UCB_values = new double[n_states*n_actions];
+    nt = new int[n_states*n_actions];
+
     for (int i=0; i<n_states; i++){
         V[i] = 0;
         et[s] = 0;
+        for (int j=0; j<n_actions; j++){
+            Q[i*n_actions+j] = 0;
+            QA[i*n_actions+j]= 0;
+            QB[i*n_actions+j] = 0;
+            Q_temperature[i*n_actions+j] = 0;
+            UCB_values[i*n_actions+j] = 0;
+            nt[i*n_actions+j] = 0;
+        }
     }
 };
 
@@ -36,18 +41,36 @@ Agent::~Agent(){
     delete[] et;
     delete[] QA;
     delete[] QB;
-    //delete[] Q_temperature;
+    delete[] Q_temperature;
+    delete[] UCB_values;
+    delete[] nt;
 };
 
 int Agent::get_initial_state(){
     return starting_state;
 };
 
-void Agent::agent_set_epsilon(double e){
+void Agent::set_initial_state(int s){
+    starting_state = s;;
+};
+
+void Agent::set_epsilon(double e){
     epsilon = e;
 };
 
-int Agent::agent_step_epsilon_greedy(int state, std::vector<int> allowed_actions, int algorithm){
+double* Agent::get_Q(){
+    return Q;
+};
+
+double* Agent::get_QA(){
+    return QA;
+};
+
+double* Agent::get_QB(){
+    return QB;
+};
+
+int Agent::epsilon_greedy(int state, std::vector<int> allowed_actions, int algorithm){
     int act = 0;
 
     double rand_num = ((double) rand() / (RAND_MAX));
@@ -86,10 +109,90 @@ int Agent::agent_step_epsilon_greedy(int state, std::vector<int> allowed_actions
     return act;
 };
 
+int Agent::boltzmann_exploration(int state, std::vector<int> allowed_actions, int algorithm, double T){
+
+    int act = 0;
+    double max_val = 0;
+    double denom = 0;
+    double Qvalue = 0;
+
+    std::vector<double> weights;
+
+    for (int i=0; i<n_actions; i++){
+        if (std::find(allowed_actions.begin(), allowed_actions.end(), i) != allowed_actions.end()) {
+            if (algorithm == 3){
+                Qvalue = QA[state*n_actions+i]+QB[state*n_actions+i];
+                Q_temperature[state*n_actions+i] = Qvalue/T;
+                if ( Qvalue > max_val){
+                    max_val = Qvalue;
+                }            
+            } else {
+                Q_temperature[state*n_actions+i] = Q[state*n_actions+i]/T;
+                if (Q[state*n_actions+i] > max_val){
+                    max_val = Q[state*n_actions+i];
+                }
+            }
+        }
+    }
+    
+    for (int i=0; i<n_actions; i++){
+        if (std::find(allowed_actions.begin(), allowed_actions.end(), i) != allowed_actions.end()) {
+            denom += exp(Q_temperature[state*n_actions+i] - max_val);
+        }
+    }
+
+    for (int i=0; i<n_actions; i++){
+        if (std::find(allowed_actions.begin(), allowed_actions.end(), i) != allowed_actions.end()) {
+            weights.push_back(exp(Q_temperature[state*n_actions+i] - max_val)/denom);
+        }
+        else {
+            weights.push_back(0); // CHRCK IF 0 IS OKAY TO BE PUT INT HE VECTOR
+        }
+    }
+
+    std::random_device rd;
+    std::mt19937 generator(rd());
+
+    std::discrete_distribution<int> distribution (weights.begin(), weights.end());
+    act = distribution(generator);
+
+    return act;
+};
+
+int Agent::UCB(int state, std::vector<int> allowed_actions, int algorithm, int t, double c){
+
+    int act = 0;
+
+    for (int j=0; j<n_actions; j++){
+        if (std::find(allowed_actions.begin(), allowed_actions.end(), j) != allowed_actions.end()) {
+            if (nt[j] != 0){
+                if (algorithm ==3){
+                    UCB_values[state*n_actions+j] = QA[state*n_actions+j]+QB[state*n_actions+j] + c*sqrt(log(float(t))/nt[state*n_actions+j]);
+                } else {
+                    UCB_values[state*n_actions+j] = Q[state*n_actions+j] + c*sqrt(log(float(t))/nt[state*n_actions+j]);
+                }
+            }
+            else{
+                UCB_values[state*n_actions+j] = 10000;
+            }
+        }
+    }
+    for (int j=0; j<n_actions; j++){
+        std::cout<<"value j="<<j<<UCB_values[state*n_actions+j]<<std::endl;
+    }
+    act = std::distance(UCB_values + state*n_actions, std::max_element(UCB_values + state*n_actions, UCB_values + state*n_actions + n_actions));
+
+    std::cout<<"chosen action="<<act<<std::endl;
+    
+    nt[state*n_actions+act] += 1;
+
+    return act;
+};
+
 void Agent::initialize_Q(){
     for (int i=0; i<n_states*n_actions; i++){
         Q[i] = 0;
-        //Q_temperature[i] = 0;
+        Q_temperature[i] = 0;
     }
 };
 
@@ -127,18 +230,15 @@ void Agent::update_Q_Learning(int s, int a, double reward, int s_next, std::vect
 	Q[s*n_actions+a] += learning_rate*(reward + discount_rate*Q[s_next*n_actions + maximizing_action] - Q[s*n_actions+a]);
 };
 
-void Agent::update_Q_final(int s, int a, double reward){
-    //std::cout<<"update: Q[s*n_actions+a]="<<Q[s*n_actions+a]<<", reward="<<reward<<std::endl;
-    //for (int aa=0; aa<4; aa++){
-        //std::cout<<"s*n_actions+aa="<<s*n_actions+aa<<std::endl;
-        Q[s*n_actions+a] += learning_rate*(reward - Q[s*n_actions+a]);
-    // }
+void Agent::update_Q_final(int s, int a, double reward){ // both for SARSA and Q learning
+    Q[s*n_actions+a] += learning_rate*(reward - Q[s*n_actions+a]);
 };
 
 void Agent::update_QA_QB(int s, int a, double reward, int s_next, std::vector<int> allowed_actions, int update_index){
 
 	int maximizing_action = allowed_actions[0];
     double max_val;
+
     //if (s==22|| s==14 || s==15 || s == 7){
         //std::cout<<"s="<<s<<", a="<<a<<", s_next="<<s_next<<std::endl;
     //}
@@ -188,7 +288,6 @@ void Agent::update_QA_QB(int s, int a, double reward, int s_next, std::vector<in
 };
 
 void Agent::update_QA_QB_final(int s, int a, double reward){
-    //std::cout<<"FINAL STATE!!!!!!!!!!!!!!!!!\n\n"<<std::endl;
     for (int aa=0; aa<4; aa++){
         QA[s*n_actions+aa] += learning_rate*(reward - QA[s*n_actions+aa]);
         QB[s*n_actions+aa] += learning_rate*(reward - QB[s*n_actions+aa]);
@@ -210,74 +309,12 @@ void Agent::update_QV_final(int s, int a, double reward){
     Q[s*n_actions + a] += learning_rate * (reward - Q[s*n_actions + a]);
 };
 
-void Agent::print_Q(){
-    for (int i=0; i<n_states; i++){
+void Agent::print(double *matrix, int n_rows, int n_cols){
+    for (int i=0; i<n_rows; i++){
         std::cout<<"state "<<i<<"  ";
-        for (int j=0; j<n_actions; j++){
-            std::cout<<Q[i*n_actions+j]<<"  ";
+        for (int j=0; j<n_cols; j++){
+            std::cout<<matrix[i*n_actions+j]<<"  ";
         }
         std::cout<<std::endl;
     }
 };
-
-void Agent::print_QA(){
-    for (int i=0; i<n_states; i++){
-        std::cout<<"state "<<i<<"  ";
-        for (int j=0; j<n_actions; j++){
-            std::cout<<QA[i*n_actions+j]<<"  ";
-        }
-        std::cout<<std::endl;
-    }
-};
-
-void Agent::print_QB(){
-    for (int i=0; i<n_states; i++){
-        std::cout<<"state "<<i<<"  ";
-        for (int j=0; j<n_actions; j++){
-            std::cout<<QB[i*n_actions+j]<<"  ";
-        }
-        std::cout<<std::endl;
-    }
-};
-
-/*int Agent::agent_Boltzmann_exploration(int state, std::vector<int> allowed_actions, double T){
-
-    int action = 0;
-    double max_val = 0;
-    double denom = 0;
-    
-    std::vector<double> weights;
-
-    for (int i=0; i<n_actions; i++){
-        if (std::find(allowed_actions.begin(), allowed_actions.end(), i) != allowed_actions.end()) {
-            Q_temperature[state*n_actions+i] = Q[state*n_actions+i]/T;
-            if (Q[state*n_actions+i] > max_val){
-                max_val = Q[state*n_actions+i];
-            }
-        }
-    }
-    
-    for (int i=0; i<n_actions; i++){
-        if (std::find(allowed_actions.begin(), allowed_actions.end(), i) != allowed_actions.end()) {
-            denom += exp(Q_temperature[state*n_actions+i] - max_val);
-        }
-    }
-
-    for (int i=0; i<n_actions; i++){
-        if (std::find(allowed_actions.begin(), allowed_actions.end(), i) != allowed_actions.end()) {
-            weights.push_back(exp(Q_temperature[state*n_actions+i] - max_val)/denom);
-        }
-        else {
-            weights.push_back(0);
-        }
-    }
-
-    std::random_device rd;
-    std::mt19937 generator(rd());
-
-    std::discrete_distribution<int> distribution (weights.begin(), weights.end());
-    action = distribution(generator);
-
-    return action;
-
-};*/

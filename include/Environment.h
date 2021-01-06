@@ -19,6 +19,8 @@ class Environment{
 
     int next_state(int state, int action);
 
+    int random_start();
+
     int get_final_state();
 
     std::vector<int> allowed_actions(int state);
@@ -26,6 +28,8 @@ class Environment{
     void fill_maze();
 
     void display_maze();
+
+    void print_policy(double *Q);
 
 };
 

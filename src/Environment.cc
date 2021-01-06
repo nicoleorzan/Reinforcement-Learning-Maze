@@ -27,6 +27,18 @@ Environment::~Environment(){
     delete[] maze;
 };
 
+int Environment::random_start(){
+    //srand (time(NULL));
+    int randval = rand() % N*N;
+    //std::cout<<"randval="<<randval<<std::endl;
+    while ( maze[randval] == 1 ){
+        randval = rand() % N*N;
+        // /std::cout<<"in randval="<<randval<<std::endl;
+    }
+    initial_state = randval;
+    return randval;
+};
+
 int Environment::get_final_state(){
     return final_state;
 }
@@ -95,7 +107,7 @@ void Environment::fill_maze(){
                 maze[i*N+j] = 1;
             }
         }
-    }*/
+    }
 
     for (int i = 0; i < N; i++) {
 		for (int j = 0; j < N; j++) {
@@ -113,17 +125,17 @@ void Environment::fill_maze(){
 				maze[i*N + j] = 1;
 			}
 		}
+	}*/
+
+     for (int i = 0; i < N; i++) {
+		for (int j = 0; j < N; j++) {
+			maze[i*N + j] = 0;
+			if ( (i == 2 & j == 0) || (i == 2 & j == 1) || (i == 2 & j == 2) || (i == 2 & j == 3) || (i == 2 & j == 4) || (i == 2 & j == 5) ||
+            (i == 5 & j == 4) || (i == 5 & j == 5) || (i == 5 & j == 6) || (i == 5 & j == 7) ) {
+				maze[i*N + j] = 1;
+			}
+		}
 	}
-    /*
-    for (int i=0; i<N; i++){
-        for (int j=0; j<N; j++){
-            maze[i*N+j] = 0;
-            if ((i==0 & j==0) || (i==1 & j==0) || (i==2 & j==0) || (i==1 & j==1) || (i==3 & j==2)){
-                maze[i*N+j] = 1;
-            }
-        }
-    }
-    */
 };
 
 int Environment::next_state(int state, int action){
@@ -169,4 +181,42 @@ double Environment::sample_reward(int state){
     }
 
     return reward;
+};
+
+void Environment::print_policy(double *Q){
+
+    double max_val;
+    double max_idx;
+
+    for (int i = 0; i < N; i++) {
+		//std::cout<<i*N<<"  ";
+		for (int j = 0; j < N; j++) {
+            if ((i*N + j) == initial_state) {
+				printf("▶ ");
+			}
+			else if ((i*N + j) == final_state) {
+				printf("◎ ");
+			}
+            else if (maze[i*N + j] == 1) {
+				printf("■ ");
+			}
+            else{
+                max_val = 0;
+                max_idx = 4;
+                for (int act=0; act<4; act++){
+                    if ( Q[(i*N+j)*4+act] > max_val ){
+                        max_val = Q[(i*N+j)*4+act];
+                        max_idx = act;
+                    }
+                }
+                if (max_idx==0){ printf("^ "); }
+                else if (max_idx==1){ printf("V "); }
+                else if (max_idx==2){ printf("< "); }
+                else if (max_idx==3){ printf("> "); }
+                else if (max_idx==4){ printf("□ "); }
+            }
+        }
+        printf("\n");
+    }
+    printf("\n");
 };
