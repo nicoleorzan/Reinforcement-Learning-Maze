@@ -18,8 +18,8 @@ int main(){
     int n_states = N*N;
     int starting_state = 56;
     int final_state = 7;
-    int num_runs = 2000;
-    int num_experiments = 1;
+    int num_runs = 200;
+    int num_experiments = 100;
     double lambda = 0.3;
     int* average_steps_sarsa = new int[num_runs];
     int* average_steps_q_learning = new int[num_runs];
@@ -140,7 +140,7 @@ int main(){
     //==============================================================================
     //==============================================================================
     
-    std::cout<<"\n======================\nTrying Boltzmann exploration\n======================\n"<<std::endl;
+    /*std::cout<<"\n======================\nTrying Boltzmann exploration\n======================\n"<<std::endl;
     // =============== RUN SARSA ===================
     std::cout<<"\n===> RUNNING SARSA"<<std::endl;
     num_runs = 100;
@@ -160,7 +160,7 @@ int main(){
 
     //ag.print(ag.get_Q(), n_states, n_actions);
     std::cout<<"\nPrinting final policy obtained from SARSA:"<<std::endl;
-    maze.print_policy(ag.get_Q());
+    maze.print_policy(ag.get_Q());*/
 
 
 

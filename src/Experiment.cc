@@ -107,6 +107,56 @@ int Experiment::single_run_QL(Agent &ag, Environment &env, int exploration_strat
     return i-1;
 };
 
+/*int Experiment::single_run_DYNAQ(Agent &ag, Environment &env, int exploration_strategy){
+
+    int a = 0, a_in;
+    int s = 0, s_in, s_new = 0, s_new_in;
+    std::vector<int> allow_act;
+    std::vector<int> allow_act_in;
+    double rew = 0, rew_in;
+
+    //s = ag.get_initial_state();
+    s = env.random_start();
+    ag.set_initial_state(s);
+    allow_act = env.allowed_actions(s);
+
+    int i=1;
+    while (i){
+        
+        if (exploration_strategy == 0){
+            a = ag.epsilon_greedy(s, allow_act, 1);  // 1 == Q_LEARNING
+        } else if (exploration_strategy == 1){
+            a = ag.boltzmann_exploration(s, allow_act, 1, T);  // 1 == Q_LEARNING      
+        } else if (exploration_strategy == 2){
+            a = ag.UCB(s, allow_act, 1, 1, c); // 1 == Q_LEARNING               
+        }
+
+        rew = env.sample_reward(s);
+        if (s == env.get_final_state()){
+            ag.update_Q_final(s, a, rew);
+            break;
+        }
+
+        s_new = env.next_state(s, a);
+        allow_act = env.allowed_actions(s_new);
+        ag.update_Q_Learning(s, a, rew, s_new, allow_act);
+
+        ag.update_model(s, a, rew, s_new);
+
+        for (int times=0; times<10; times++){
+            s = ag.return_observed_state();
+            a = ag.return_observed_action();
+            rew = ag.sample_reward_from_model(s);
+            s_new = ag.next_state_from_model(s, a);
+            ag.update_Q_Learning(s_in, a_in, rew_in, s_new_in, allow_act_in);
+        }
+
+        s = s_new;       
+        i += 1;
+    }
+    return i-1;
+};*/
+
 
 int Experiment::single_run_double_QL(Agent &ag, Environment &env, int exploration_strategy){
 
@@ -193,6 +243,47 @@ int Experiment::single_run_QV(Agent &ag, Environment &env, int exploration_strat
     }
     return i-1;
 };
+
+/*int Experiment::single_run_semi_gradient_SARSA(Agent &ag, Environment &env, int exploration_strategy){
+
+    int a = 0;
+    int s = 0, s_new = 0;
+    std::vector<int> allow_act;
+    double rew = 0;
+    int I;
+
+    s = env.random_start();
+    ag.set_initial_state(s);
+
+    int i=1;
+    while (i){
+
+        allow_act = env.allowed_actions(s);
+        if (exploration_strategy==0){
+            a = ag.epsilon_greedy(s, allow_act, 0); // 3 == QV leaning
+        } else if (exploration_strategy == 1){
+            a = ag.boltzmann_exploration(s, allow_act, 0, T);  // 3 == QV leaning      
+        } else if (exploration_strategy == 2){
+            a = ag.UCB(s, allow_act, 0, i, c);   // 3 == QV leaning       
+        }
+        rew = env.sample_reward(s);
+
+        if (s == env.get_final_state()){
+            ag.update_QV_final(s, a, rew);
+            break;
+        }
+
+        s_new = env.next_state(s, a);
+        allow_act = env.allowed_actions(s_new);
+
+        ag.update_QV(s, a, rew, s_new);
+        
+        s = s_new;       
+        i += 1;
+    }
+    return i-1;
+};*/
+
 
 void Experiment::more_runs(Agent &ag, Environment &env, int experiment_number, int algorithm, int exp_str){
 

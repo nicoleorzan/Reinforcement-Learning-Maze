@@ -24,9 +24,14 @@ class Experiment{
 
     int single_run_QL(Agent &ag, Environment & env, int exploration_strategy);
 
+    int single_run_DYNAQ(Agent &ag, Environment & env, int exploration_strategy);
+
     int single_run_double_QL(Agent &ag, Environment &env, int exploration_strategy);
 
     int single_run_QV(Agent &ag, Environment &env, int exploration_strategy);
+
+    //int single_run_semi_gradient_SARSA(Agent &ag, Environment &env, int exploration_strategy);
+
 
 
     void more_runs(Agent &ag, Environment & env, int experiment_number, int algorithm,  int exploration_strategy);

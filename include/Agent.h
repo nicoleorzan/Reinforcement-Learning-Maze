@@ -1,5 +1,6 @@
 #ifndef AGENT
 #define AGENT
+#include<map>
 
 #include <vector>
 
@@ -24,6 +25,11 @@ class Agent{
         double *UCB_values;
         int *nt;
 
+        int *dyna_reward;
+        int *dyna_next_state;
+
+        //std::multimap<int, std::multimap<int, double>> model;
+        
     Agent(int n_stat, int n_act, double e, double l, double d, int s, int lam);
 
     ~Agent();
@@ -50,9 +56,13 @@ class Agent{
 
     void update_QA_QB_final(int s, int a, double reward);
 
+    void update_V(int s, int a, double reward, int s_next);
+
     void update_QV(int s, int a, double reward, int s_new);  
     
     void update_QV_final(int s, int a, double reward);
+
+    void update_model(int s, int a, double rew, int s_next);
 
     double* get_Q();
 
@@ -67,6 +77,8 @@ class Agent{
     void initialize_QA_QB();
 
     void initialize_V();
+
+    //void return_observed_state();
 
 };
 

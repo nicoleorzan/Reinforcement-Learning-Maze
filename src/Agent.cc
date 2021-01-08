@@ -20,6 +20,8 @@ Agent::Agent(int n_stat, int n_act, double e, double l, double d, int s, int lam
     Q_temperature = new double[n_states*n_actions];
     UCB_values = new double[n_states*n_actions];
     nt = new int[n_states*n_actions];
+    dyna_next_state = new int[n_states*n_actions];
+    dyna_reward = new int[n_states*n_actions];
 
     for (int i=0; i<n_states; i++){
         V[i] = 0;
@@ -31,6 +33,8 @@ Agent::Agent(int n_stat, int n_act, double e, double l, double d, int s, int lam
             Q_temperature[i*n_actions+j] = 0;
             UCB_values[i*n_actions+j] = 0;
             nt[i*n_actions+j] = 0;
+            dyna_next_state[i*n_actions+j] = 0;
+            dyna_reward[i*n_act+j] = 0;
         }
     }
 };
@@ -44,6 +48,8 @@ Agent::~Agent(){
     delete[] Q_temperature;
     delete[] UCB_values;
     delete[] nt;
+    delete[] dyna_next_state;
+    delete[] dyna_reward;
 };
 
 int Agent::get_initial_state(){
@@ -209,6 +215,10 @@ void Agent::initialize_V(){
     }
 };
 
+void Agent::update_V(int s, int a, double reward, int s_next){
+    V[s] += learning_rate*(reward + discount_rate*V[s_next] - V[s]);
+};
+
 void Agent::update_Q_SARSA(int s, int a, double reward, int s_next, int a_next){
     Q[s*n_actions+a] += learning_rate*(reward + discount_rate*Q[s_next*n_actions + a_next] - Q[s*n_actions+a]);
 };
@@ -287,6 +297,16 @@ void Agent::update_QV_final(int s, int a, double reward){
     V[s] += learning_rate*delta*et[s];
     Q[s*n_actions + a] += learning_rate * (reward - Q[s*n_actions + a]);
 };
+
+/*void Agent::update_model(int s, int a, double rew, int s_next){
+    //model[s*n_actions+a] = rew;
+    //std::multimap<int, double> tmp;
+    
+    //tmp.insert(std::pair<int, double>(a, rew));
+    //model.insert(std::pair<int, std::multimap<int, double>>(s, tmp));
+    dyna_reward[s*n_actions+a] = rew;
+    dyna_next_state[s*n_actions+a] = s_next;
+};*/
 
 void Agent::print(double *matrix, int n_rows, int n_cols){
     for (int i=0; i<n_rows; i++){
