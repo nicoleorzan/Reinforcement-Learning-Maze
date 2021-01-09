@@ -3,7 +3,7 @@
 #include <random>
 #include <algorithm>
 
-Agent::Agent(int n_stat, int n_act, double e, double l, double d, int s, int lam){
+Agent::Agent(int n_stat, int n_act, double e, double l, double d, int s, double lam){
     n_states = n_stat;
     n_actions = n_act;
     epsilon = e;
@@ -126,7 +126,7 @@ int Agent::boltzmann_exploration(int state, std::vector<int> allowed_actions, in
 
     for (int i=0; i<n_actions; i++){
         if (std::find(allowed_actions.begin(), allowed_actions.end(), i) != allowed_actions.end()) {
-            if (algorithm == 3){
+            if (algorithm == 2){
                 Qvalue = QA[state*n_actions+i]+QB[state*n_actions+i];
                 Q_temperature[state*n_actions+i] = Qvalue/T;
                 if ( Qvalue > max_val){
@@ -152,7 +152,7 @@ int Agent::boltzmann_exploration(int state, std::vector<int> allowed_actions, in
             weights.push_back(exp(Q_temperature[state*n_actions+i] - max_val)/denom);
         }
         else {
-            weights.push_back(0); // CHRCK IF 0 IS OKAY TO BE PUT INT HE VECTOR
+            weights.push_back(0); // CHRCK IF 0 IS OKAY TO BE PUT IN TO THE VECTOR
         }
     }
 
@@ -172,7 +172,7 @@ int Agent::UCB(int state, std::vector<int> allowed_actions, int algorithm, int t
     for (int j=0; j<n_actions; j++){
         if (std::find(allowed_actions.begin(), allowed_actions.end(), j) != allowed_actions.end()) {
             if (nt[j] != 0){
-                if (algorithm ==3){
+                if (algorithm == 2){
                     UCB_values[state*n_actions+j] = QA[state*n_actions+j]+QB[state*n_actions+j] + c*sqrt(log(float(t))/nt[state*n_actions+j]);
                 } else {
                     UCB_values[state*n_actions+j] = Q[state*n_actions+j] + c*sqrt(log(float(t))/nt[state*n_actions+j]);
@@ -183,12 +183,13 @@ int Agent::UCB(int state, std::vector<int> allowed_actions, int algorithm, int t
             }
         }
     }
-    for (int j=0; j<n_actions; j++){
-        std::cout<<"value j="<<j<<UCB_values[state*n_actions+j]<<std::endl;
-    }
+    //for (int j=0; j<n_actions; j++){
+    //    std::cout<<"value j="<<j<<UCB_values[state*n_actions+j]<<std::endl;
+    //}
+
     act = std::distance(UCB_values + state*n_actions, std::max_element(UCB_values + state*n_actions, UCB_values + state*n_actions + n_actions));
 
-    std::cout<<"chosen action="<<act<<std::endl;
+   /* std::cout<<"chosen action="<<act<<std::endl;*/
 
     nt[state*n_actions+act] += 1;
 
@@ -286,14 +287,14 @@ void Agent::update_QA_QB_final(int s, int a, double reward){
 
 void Agent::update_QV(int s, int a, double reward, int s_new){
     delta = reward + discount_rate*V[s_new] - V[s];
-    et[s] = discount_rate*lambda*et[s] + 1; // eta[s];
+    et[s] = discount_rate*lambda*et[s] + 1.0; // eta[s];
     V[s] += learning_rate*delta*et[s];
     Q[s*n_actions + a] += learning_rate * (reward + discount_rate*V[s_new] - Q[s*n_actions + a]);
 };
 
 void Agent::update_QV_final(int s, int a, double reward){
     delta = reward - V[s];
-    et[s] = discount_rate*lambda*et[s] + 1; // eta[s];
+    et[s] = discount_rate*lambda*et[s] + 1.0; // eta[s];
     V[s] += learning_rate*delta*et[s];
     Q[s*n_actions + a] += learning_rate * (reward - Q[s*n_actions + a]);
 };
