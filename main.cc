@@ -20,7 +20,7 @@ int main() {
 	int final_state = 7;
 	int num_runs = 100; 
 	int num_experiments = 100;
-	double lambda = 0;
+	double lambda = 0.5;
 	int* average_steps_sarsa = new int[num_runs];
 	int* average_steps_q_learning = new int[num_runs];
 	int* average_steps_double_q_learning = new int[num_runs];
