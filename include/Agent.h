@@ -30,7 +30,7 @@ class Agent{
 
         //std::multimap<int, std::multimap<int, double>> model;
         
-    Agent(int n_stat, int n_act, double e, double l, double d, int s, int lam);
+    Agent(int n_stat, int n_act, double e, double l, double d, int s, double lam);
 
     ~Agent();
 
