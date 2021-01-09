@@ -65,7 +65,7 @@ int Experiment::single_run_SARSA(Agent &ag, Environment &env, int exploration_st
         s = s_new;       
         i += 1;
     }
-    return i-1;
+    return i + 1;
 };
 
 int Experiment::single_run_QL(Agent &ag, Environment &env, int exploration_strategy){
@@ -104,7 +104,7 @@ int Experiment::single_run_QL(Agent &ag, Environment &env, int exploration_strat
         s = s_new;       
         i += 1;
     }
-    return i-1;
+    return i + 1;
 };
 
 /*int Experiment::single_run_DYNAQ(Agent &ag, Environment &env, int exploration_strategy){
@@ -200,7 +200,7 @@ int Experiment::single_run_double_QL(Agent &ag, Environment &env, int exploratio
         s = s_new;       
         i += 1;
     }
-    return i-1;
+    return i + 1;
 };
 
 int Experiment::single_run_QV(Agent &ag, Environment &env, int exploration_strategy){
@@ -241,7 +241,7 @@ int Experiment::single_run_QV(Agent &ag, Environment &env, int exploration_strat
         s = s_new;       
         i += 1;
     }
-    return i-1;
+    return i+1;
 };
 
 /*int Experiment::single_run_semi_gradient_SARSA(Agent &ag, Environment &env, int exploration_strategy){
