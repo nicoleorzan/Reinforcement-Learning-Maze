@@ -24,6 +24,7 @@ int Experiment::single_run_SARSA(Agent &ag, Environment &env, int exploration_st
     int s = 0, s_new = 0;
     std::vector<int> allow_act;
     double rew = 0;
+    //int aaa;
 
     //s = ag.get_initial_state();
 
@@ -41,7 +42,7 @@ int Experiment::single_run_SARSA(Agent &ag, Environment &env, int exploration_st
 
     int i=1;
     while (i){
-
+        
         rew = env.sample_reward(s);
         if (s == env.get_final_state()){
             ag.update_Q_final(s, a, rew);
@@ -49,6 +50,8 @@ int Experiment::single_run_SARSA(Agent &ag, Environment &env, int exploration_st
         }
 
         s_new = env.next_state(s, a);
+        //std::cout<<"s="<<s_new<<std::endl;
+        //std::cin>>aaa;
         allow_act = env.allowed_actions(s_new);
 
         if (exploration_strategy==0){
@@ -58,6 +61,7 @@ int Experiment::single_run_SARSA(Agent &ag, Environment &env, int exploration_st
         } else if (exploration_strategy == 2){
             a_new = ag.UCB(s, allow_act, 0, i, c);  // 0 == SARSA                
         }
+        //std::cout<<"a="<<a_new<<std::endl;
 
         ag.update_Q_SARSA(s, a, rew, s_new, a_new);
 

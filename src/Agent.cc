@@ -183,13 +183,13 @@ int Agent::UCB(int state, std::vector<int> allowed_actions, int algorithm, int t
             }
         }
     }
-    //for (int j=0; j<n_actions; j++){
-    //    std::cout<<"value j="<<j<<UCB_values[state*n_actions+j]<<std::endl;
-    //}
+    /*for (int j=0; j<n_actions; j++){
+        std::cout<<"value j="<<j<<", UCB[j]="<<UCB_values[state*n_actions+j]<<std::endl;
+    }*/
 
     act = std::distance(UCB_values + state*n_actions, std::max_element(UCB_values + state*n_actions, UCB_values + state*n_actions + n_actions));
 
-   /* std::cout<<"chosen action="<<act<<std::endl;*/
+    //std::cout<<"chosen action="<<act<<std::endl;
 
     nt[state*n_actions+act] += 1;
 
