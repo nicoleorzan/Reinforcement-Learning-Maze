@@ -12,20 +12,20 @@
 int main() {
 
 	double epsilon = 0.7;
-	double learning_rate = 0.1;
+	double learning_rate = 0.8;
 	double discount_rate = 0.99;
 	int n_actions = 4; // up, down, left, right
 	int n_states = N * N;
 	int starting_state = 56;
 	int final_state = 7;
-	int num_runs = 100; 
-	int num_experiments = 100;
+	int num_runs = 10; 
+	int num_experiments = 1;
 	double lambda = 0.5;
 	int* average_steps_sarsa = new int[num_runs];
 	int* average_steps_q_learning = new int[num_runs];
 	int* average_steps_double_q_learning = new int[num_runs];
 	int* average_steps_qv = new int[num_runs];
-	double c = 2; //big c -> more exploration
+	double c = 20; //big c -> more exploration
 	double T = 0.01;
 
 	// timing-related variables
@@ -59,6 +59,8 @@ int main() {
 	ag.print(ag.get_Q(), n_states, n_actions);
 	std::cout << "\nPrinting final policy obtained from SARSA:" << std::endl;
 	maze.print_policy(ag.get_Q());
+
+	//return 0;
 
 	// =============== RUN Q LEARNING ================
 	std::cout << "\n===> RUNNING Q LEARNING" << std::endl;

@@ -46,6 +46,8 @@ class Agent{
     
     int UCB(int state, std::vector<int> allowed_actions, int algorithm, int t, double c);
 
+    int choose_max(int state);
+
     void update_Q_SARSA(int s, int a, double reward, int s_next, int a_next);
 
     void update_Q_Learning(int s, int a, double reward, int s_next,  std::vector<int> allowed_actions);
@@ -71,6 +73,8 @@ class Agent{
     double* get_QB();
 
     void print(double *matrix, int n_rows, int n_cols);
+
+    void print_nt();
 
     void initialize_Q();
 

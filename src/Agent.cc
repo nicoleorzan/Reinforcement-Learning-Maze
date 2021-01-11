@@ -57,7 +57,7 @@ int Agent::get_initial_state(){
 };
 
 void Agent::set_initial_state(int s){
-    starting_state = s;;
+    starting_state = s;
 };
 
 void Agent::set_epsilon(double e){
@@ -166,15 +166,17 @@ int Agent::boltzmann_exploration(int state, std::vector<int> allowed_actions, in
 };
 
 int Agent::UCB(int state, std::vector<int> allowed_actions, int algorithm, int t, double c){
-
+    srand (time(NULL));
     int act = 0;
 
     for (int j=0; j<n_actions; j++){
         if (std::find(allowed_actions.begin(), allowed_actions.end(), j) != allowed_actions.end()) {
-            if (nt[j] != 0){
+            //std::cout<<"here "<<j<<" is a possible action\n";
+            if (nt[state*n_actions+j] != 0){
                 if (algorithm == 2){
                     UCB_values[state*n_actions+j] = QA[state*n_actions+j]+QB[state*n_actions+j] + c*sqrt(log(float(t))/nt[state*n_actions+j]);
                 } else {
+                    //std::cout<<"c="<<c<<", float t"<<float(t)<<", log float t="<<log(float(t))<<", nt="<<nt[state*n_actions+j]<<", c*sqrt(log(float(t))/nt[state*n_actions+j]="<<c*sqrt(log(float(t))/nt[state*n_actions+j])<<std::endl;
                     UCB_values[state*n_actions+j] = Q[state*n_actions+j] + c*sqrt(log(float(t))/nt[state*n_actions+j]);
                 }
             }
@@ -182,18 +184,45 @@ int Agent::UCB(int state, std::vector<int> allowed_actions, int algorithm, int t
                 UCB_values[state*n_actions+j] = 10000;
             }
         }
+        else{
+            UCB_values[state*n_actions+j] = -100000;
+        }
     }
     /*for (int j=0; j<n_actions; j++){
-        std::cout<<"value j="<<j<<", UCB[j]="<<UCB_values[state*n_actions+j]<<std::endl;
+       std::cout<<"value j="<<j<<", UCB[j]="<<UCB_values[state*n_actions+j]<<std::endl;
     }*/
 
-    act = std::distance(UCB_values + state*n_actions, std::max_element(UCB_values + state*n_actions, UCB_values + state*n_actions + n_actions));
+    act = choose_max(state); //std::distance(UCB_values + state*n_actions, std::max_element(UCB_values + state*n_actions, UCB_values + state*n_actions + n_actions));
 
     //std::cout<<"chosen action="<<act<<std::endl;
 
     nt[state*n_actions+act] += 1;
 
     return act;
+};
+
+int Agent::choose_max(int state){
+
+    std::vector<int> ties;
+    double max_value_UCB = -1000;
+    srand (time(0));
+
+    for (int i=0; i<n_actions; i++){
+        if (UCB_values[state*n_actions+i] > max_value_UCB){
+            max_value_UCB = UCB_values[state*n_actions+i];
+            ties.clear();
+            ties.push_back(i);
+        } else if (UCB_values[state*n_actions+i] == max_value_UCB) {
+            ties.push_back(i);
+        }
+    }
+
+    //std::cout<<"printing ties"<<std::endl;
+    /*for (std::vector<int>::const_iterator i = ties.begin(); i != ties.end(); ++i)
+        std::cout << *i << ' ';*/
+
+    int randomIndex = rand() % ties.size();
+    return ties[randomIndex];
 };
 
 void Agent::initialize_Q(){
@@ -318,3 +347,13 @@ void Agent::print(double *matrix, int n_rows, int n_cols){
         std::cout<<std::endl;
     }
 };
+
+void Agent::print_nt(){
+    for (int i=0; i<n_states; i++){
+        std::cout<<"nt["<<i<<"]= ";
+        for (int j=0; j<n_actions; j++){
+            std::cout<<nt[i*n_actions+j]<<" ";
+        }
+        std::cout<<std::endl;
+    }
+}

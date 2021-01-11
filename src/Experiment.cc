@@ -24,9 +24,9 @@ int Experiment::single_run_SARSA(Agent &ag, Environment &env, int exploration_st
     int s = 0, s_new = 0;
     std::vector<int> allow_act;
     double rew = 0;
-    //int aaa;
+    int aaa;
 
-    //s = ag.get_initial_state();
+    s = ag.get_initial_state();
 
     s = env.random_start();
     ag.set_initial_state(s);
@@ -42,7 +42,7 @@ int Experiment::single_run_SARSA(Agent &ag, Environment &env, int exploration_st
 
     int i=1;
     while (i){
-        
+        //std::cout<<"\n\n===>TIME="<<i<<std::endl;
         rew = env.sample_reward(s);
         if (s == env.get_final_state()){
             ag.update_Q_final(s, a, rew);
@@ -68,7 +68,12 @@ int Experiment::single_run_SARSA(Agent &ag, Environment &env, int exploration_st
         a = a_new;
         s = s_new;       
         i += 1;
+        /*if (i>1000){
+            ag.print_nt();
+            return 1;
+        }*/
     }
+    //ag.print_nt();
     return i + 1;
 };
 
@@ -292,7 +297,7 @@ int Experiment::single_run_QV(Agent &ag, Environment &env, int exploration_strat
 void Experiment::more_runs(Agent &ag, Environment &env, int experiment_number, int algorithm, int exp_str){
 
     for (int run_number=0; run_number<n_runs; run_number++){
-        //std::cout<<"Run number="<<run_number<<std::endl;
+        std::cout<<"Run number="<<run_number<<std::endl;
         if (algorithm == 0 ){
             num_steps_each_experiment[experiment_number*n_runs+run_number] = single_run_SARSA(ag, env, exp_str);
         } else if (algorithm == 1 ){
