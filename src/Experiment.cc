@@ -297,7 +297,7 @@ int Experiment::single_run_QV(Agent &ag, Environment &env, int exploration_strat
 void Experiment::more_runs(Agent &ag, Environment &env, int experiment_number, int algorithm, int exp_str){
 
     for (int run_number=0; run_number<n_runs; run_number++){
-        std::cout<<"Run number="<<run_number<<std::endl;
+        //std::cout<<"Run number="<<run_number<<std::endl;
         if (algorithm == 0 ){
             num_steps_each_experiment[experiment_number*n_runs+run_number] = single_run_SARSA(ag, env, exp_str);
         } else if (algorithm == 1 ){

@@ -11,15 +11,15 @@
 
 int main() {
 
-	double epsilon = 0.7;
+	double epsilon = 0.2;
 	double learning_rate = 0.8;
 	double discount_rate = 0.99;
 	int n_actions = 4; // up, down, left, right
 	int n_states = N * N;
 	int starting_state = 56;
 	int final_state = 7;
-	int num_runs = 10; 
-	int num_experiments = 1;
+	int num_runs = 300; 
+	int num_experiments = 100;
 	double lambda = 0.5;
 	int* average_steps_sarsa = new int[num_runs];
 	int* average_steps_q_learning = new int[num_runs];

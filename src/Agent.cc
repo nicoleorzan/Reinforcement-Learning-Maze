@@ -316,8 +316,16 @@ void Agent::update_QA_QB_final(int s, int a, double reward){
 
 void Agent::update_QV(int s, int a, double reward, int s_new){
     delta = reward + discount_rate*V[s_new] - V[s];
-    et[s] = discount_rate*lambda*et[s] + 1.0; // eta[s];
-    V[s] += learning_rate*delta*et[s];
+    for (int st=0; st<n_states; st++){
+        if (st == s){
+            et[s] = discount_rate*lambda*et[s] + 1.0;
+        } else {
+            et[st] = discount_rate*lambda*et[st];
+        }
+        V[st] += learning_rate*delta*et[st];
+    }
+    //et[s] = discount_rate*lambda*et[s] + 1.0; // eta[s];
+    //V[s] += learning_rate*delta*et[s];
     Q[s*n_actions + a] += learning_rate * (reward + discount_rate*V[s_new] - Q[s*n_actions + a]);
 };
 
