@@ -15,11 +15,12 @@ struct compare
     }
 };
 
-Environment::Environment(int n, int is, int fs){
+Environment::Environment(int n, int is, int fs, std::vector<int> w){
     N = n;
     initial_state = is;
     final_state = fs; // if here the simulation terminates
     maze = new int[N*N];
+    walls = w;
     fill_maze();
 };
 
@@ -42,31 +43,21 @@ int Environment::get_final_state(){
     return final_state;
 }
 
-/*void Environment::display_maze(){
-    for (int i=0; i<N; i++){
-        std::cout<<i*N<<"  ";
-        for (int j=0; j<N; j++){
-            printf("%d ",maze[i*N+j]);
-        }
-        printf("\n");
-    }    
-};*/
-
 void Environment::display_maze() {
 	for (int i = 0; i < N; i++) {
 		for (int j = 0; j < N; j++) {
-			if ((i*N + j) == initial_state) {
+			/*if ((i*N + j) == initial_state) {
 				printf("▶ ");
-			}
-			else if ((i*N + j) == final_state) {
+			}*/
+			if ((i*N + j) == final_state) {
 				printf("◎ ");
 			}
 			else if (maze[i*N + j] == 1) {
 				printf("■ ");
 			}
 			else {
-				printf("□ ");
-                //std::cout<<i*N+j<<" ";
+				//printf("□ ");
+                std::cout<<i*N+j<<" ";
 			}
 		}
 		printf("\n");
@@ -94,20 +85,14 @@ std::vector<int> Environment::allowed_actions(int state){
 };
 
 void Environment::fill_maze(){
-    /*Random_maze Rmaze(N, initial_state, final_state);
-    std::vector<int> states = Rmaze.create();
 
-    for (int i=0; i<N; i++){
-        for (int j=0; j<N; j++){
-            if (std::find_if(states.begin(), states.end(), compare(i*N+j)) != states.end()){
-                maze[i*N+j] = 0;
-            }
-            else {
-                maze[i*N+j] = 1;
-            }
-        }
+    for (int i=0; i<N*N; i++){
+        if (std::find(walls.begin(), walls.end(), i) != walls.end()) {
+            maze[i] = 1;
+        } else { maze[i] = 0;}
     }
 
+    /*
     for (int i = 0; i < N; i++) {
 		for (int j = 0; j < N; j++) {
 			maze[i*N + j] = 0;
@@ -126,7 +111,7 @@ void Environment::fill_maze(){
 		}
 	}*/
 
-     for (int i = 0; i < N; i++) {
+    /*for (int i = 0; i < N; i++) {
 		for (int j = 0; j < N; j++) {
 			maze[i*N + j] = 0;
 			if ( (i == 2 & j == 0) || (i == 2 & j == 1) || (i == 2 & j == 2) || (i == 2 & j == 3) || (i == 2 & j == 4) || (i == 2 & j == 5) ||
@@ -134,7 +119,7 @@ void Environment::fill_maze(){
 				maze[i*N + j] = 1;
 			}
 		}
-	}
+    }*/
 };
 
 int Environment::next_state(int state, int action){

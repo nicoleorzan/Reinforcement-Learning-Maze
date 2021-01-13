@@ -10,8 +10,9 @@ class Environment{
     int initial_state;
     int final_state; // final state defined by user
     int *maze;
+    std::vector<int> walls;
 
-    Environment(int n, int is, int fs);
+    Environment(int n, int is, int fs, std::vector<int> w);
 
     ~Environment();
 

@@ -24,7 +24,7 @@ class Experiment{
 
     int single_run_QL(Agent &ag, Environment & env, int exploration_strategy);
 
-    int single_run_DYNAQ(Agent &ag, Environment & env, int exploration_strategy);
+    //int single_run_DYNAQ(Agent &ag, Environment & env, int exploration_strategy);
 
     int single_run_double_QL(Agent &ag, Environment &env, int exploration_strategy);
 
@@ -38,10 +38,12 @@ class Experiment{
 
     void run_more_experiments(Agent &ag, Environment & env, int algorithm, int exploration_strategy);
 
+    std::vector<int> run_more_evaluations(Agent &ag, Environment & env, int algorithm, int epsilon, std::vector<int> starting_states);
+
     int* compute_average();
 
 
-    void evaluation(Agent &ag, Environment & env, double epsilon, int algorithm, int starting_state);
+    int evaluation(Agent &ag, Environment & env, double epsilon, int algorithm, int starting_state);
 };
 
 #endif

@@ -330,6 +330,18 @@ void Experiment::run_more_experiments(Agent &ag, Environment &env, int algorithm
     }
 };
 
+std::vector<int> Experiment::run_more_evaluations(Agent &ag, Environment &env, int algorithm, int epsilon, std::vector<int> starting_states ){
+
+    std::cout<<"\nRunning "<<starting_states.size()<<" evaluations."<<std::endl;
+    std::vector<int> evaluation_steps;
+
+    for (int i=0; i<starting_states.size(); i++){
+        evaluation_steps.push_back(evaluation(ag, env, epsilon, algorithm, starting_states[i]));
+               
+    }
+    return evaluation_steps;
+};
+
 int* Experiment::compute_average(){
 
     std::cout<<"Computing the average of the steps the agent needs to find the final block. \nAverage is computed on the group of "<<n_experiments<<" experiments.\n\n";
@@ -344,22 +356,20 @@ int* Experiment::compute_average(){
     return average_steps;
 };
 
-void Experiment::evaluation(Agent &ag, Environment &env, double epsilon, int algorithm, int starting_state){
+int Experiment::evaluation(Agent &ag, Environment &env, double epsilon, int algorithm, int starting_state){
 
-    std::cout<<"\nEvaluation of the learnt policy with exploration rate of "<<epsilon<<std::endl;
     int s = 0, a = 0;
     std::vector<int> allow_act;
 
     ag.set_epsilon(epsilon);
 
-    ag.set_initial_state(starting_state);
     s = starting_state;
 
     int i=1;
     while (i){
 
         allow_act = env.allowed_actions(s);
-        a = ag.epsilon_greedy(s, allow_act, algorithm); 
+        a = ag.epsilon_greedy(s, allow_act, algorithm);
         //std::cout<<"s="<<s<<", a="<<a<<std::endl; 
 
         if (s == env.get_final_state()){
@@ -369,6 +379,6 @@ void Experiment::evaluation(Agent &ag, Environment &env, double epsilon, int alg
 
         i += 1;
     }
-    std::cout<<"final number of steps="<<i-1<<std::endl;
-
+    //std::cout<<"final number of steps="<<i-1<<std::endl;
+    return i-1;
 };
