@@ -5,21 +5,17 @@
 #include <fstream>
 #include "time.h"
 
-#define N 12
-
 //#define TCPU_TIME (clock_gettime( CLOCK_PROCESS_CPUTIME_ID, &ts ), (double)ts.tv_sec + (double)ts.tv_nsec * 1e-9)
 
 int main() {
 
+	int N = 12;
 	double epsilon = 0.5;
 	double learning_rate = 0.3;
 	double discount_rate = 0.99;
 	int n_actions = 4; // up, down, left, right
-	int n_states = N * N;
-	int starting_state = 56;
-	int final_state = N-1;
-	int num_runs = 1000; 
-	int num_experiments = 1;
+	int num_runs = 1500; 
+	int num_experiments = 100;
 	double lambda = 0.5;
 	int* average_steps_sarsa = new int[num_runs];
 	int* average_steps_q_learning = new int[num_runs];
@@ -35,18 +31,35 @@ int main() {
 	// read maze from file
 
 	std::ifstream in;
-    in.open("wall_states.txt");
+    in.open("maze_definition.txt");
   
 	std::vector<int> walls;
     int element;
 
+	int i=0;
     if (in.is_open()) {
         while (in >> element) {
-			walls.push_back(element);
+			if (i==0){
+				N = element;
+			} else{
+				walls.push_back(element);
+			}
+			i++;
         }
     }
 
     in.close();
+
+	int n_states = N * N;
+	int starting_state = 56;
+	int final_state = N-1;
+
+	// Define the maze
+	Environment maze(N, starting_state, final_state, walls);
+	maze.display_maze();
+
+
+	return 0;
 
 
 	if (starting_state < 0 || starting_state >= N * N || final_state < 0 || final_state >= N * N) {
@@ -55,14 +68,9 @@ int main() {
 	}
 
 	std::ofstream myfile;
-	myfile.open("data.txt");
+	myfile.open("data/data.txt");
 	myfile << "epsilon = " << epsilon << "\n" << "learning_rate = " << learning_rate << "\n" << "discount_rate = " << discount_rate << "\n" << "lambda = " << lambda << "\n" << "c = " << c << "\n" << "T = " << T << "\n";
-	myfile << "SARSA   Q_learning   double_Q_learning   QV_learning\n";
-
-	// Define the maze
-	Environment maze(N, starting_state, final_state, walls);
-	maze.display_maze();
-
+	myfile << "step,SARSA,Q_learning,double_Q_learning,QV_learning\n";
 
 	// =============== RUN SARSA ===================
 	std::cout << "\n===> RUNNING SARSA" << std::endl;
@@ -128,7 +136,7 @@ int main() {
 
 
 	for (int i = 0; i < num_runs; i++) {
-		myfile << "   " << average_steps_sarsa[i] << "   " << average_steps_q_learning[i] << "   " << average_steps_double_q_learning[i] << "   " << average_steps_qv[i] << "\n";
+		myfile << i <<"," << average_steps_sarsa[i] << "," << average_steps_q_learning[i] << "," << average_steps_double_q_learning[i] << "," << average_steps_qv[i] << "\n";
 	}
 
 	// ===============================================
@@ -141,7 +149,7 @@ int main() {
 	std::cout << "\n===> EVALUATION OF SARSA" << std::endl;
 	algorithm = 0;
 	//exp.evaluation(ag, maze, epsilon, algorithm);
-	std::vector<int> starting_states = {0, 9, 56, 8, 10, 32, 46, 61, 28, 31, 63};
+	std::vector<int> starting_states = {0, 9, 56, 8, 10, 32, 46, 61, 28, 31, 63, 11, 46, 47, 107, 121, 136, 142, 12, 72, 84, 100, 76, 115, 117};
 
 	std::vector<int> evals = exp.run_more_evaluations(ag, maze, algorithm, epsilon, starting_states);
 
@@ -161,10 +169,10 @@ int main() {
 	std::vector<int> evals3 = exp3.run_more_evaluations(ag3, maze, algorithm, epsilon, starting_states);
 
 	std::ofstream myfile_evals;
-	myfile_evals.open("data_evals.txt");
-	myfile_evals << "SARSA   Q_learning   double_Q_learning   QV_learning\n";
+	myfile_evals.open("data/data_evals.txt");
+	myfile_evals << "SARSA,Q_learning,double_Q_learning,QV_learning\n";
 	for (int i = 0; i < starting_states.size(); i++) {
-		myfile_evals << "   " << evals[i] << "   " << evals1[i] << "   " << evals2[i] << "   " << evals3[i] << "\n";
+		myfile_evals << i <<"," << evals[i] << "," << evals1[i] << "," << evals2[i] << "," << evals3[i] << "\n";
 	}
 
 	myfile.close();
