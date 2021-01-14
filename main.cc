@@ -58,10 +58,6 @@ int main() {
 	Environment maze(N, starting_state, final_state, walls);
 	maze.display_maze();
 
-
-	return 0;
-
-
 	if (starting_state < 0 || starting_state >= N * N || final_state < 0 || final_state >= N * N) {
 		std::cout << "Initial or final state outside the maze borders\n";
 		return -1;
@@ -145,7 +141,6 @@ int main() {
 
 	std::cout << "Performing evaluation with greedy policy with random starting state:" << std::endl;
 	epsilon = 0.1;
-
 	std::cout << "\n===> EVALUATION OF SARSA" << std::endl;
 	algorithm = 0;
 	//exp.evaluation(ag, maze, epsilon, algorithm);
