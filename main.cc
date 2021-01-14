@@ -5,7 +5,7 @@
 #include <fstream>
 #include "time.h"
 
-#define N 8
+#define N 12
 
 //#define TCPU_TIME (clock_gettime( CLOCK_PROCESS_CPUTIME_ID, &ts ), (double)ts.tv_sec + (double)ts.tv_nsec * 1e-9)
 
@@ -17,7 +17,7 @@ int main() {
 	int n_actions = 4; // up, down, left, right
 	int n_states = N * N;
 	int starting_state = 56;
-	int final_state = 7;
+	int final_state = N-1;
 	int num_runs = 1000; 
 	int num_experiments = 1;
 	double lambda = 0.5;
@@ -62,6 +62,7 @@ int main() {
 	// Define the maze
 	Environment maze(N, starting_state, final_state, walls);
 	maze.display_maze();
+
 
 	// =============== RUN SARSA ===================
 	std::cout << "\n===> RUNNING SARSA" << std::endl;

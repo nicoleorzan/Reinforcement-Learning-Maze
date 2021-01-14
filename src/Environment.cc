@@ -56,8 +56,8 @@ void Environment::display_maze() {
 				printf("■ ");
 			}
 			else {
-				//printf("□ ");
-                std::cout<<i*N+j<<" ";
+				printf("□ ");
+                //std::cout<<i*N+j<<" ";
 			}
 		}
 		printf("\n");
