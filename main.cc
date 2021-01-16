@@ -10,7 +10,7 @@
 int main() {
 
 	int N = 12;
-	double epsilon = 0.6;
+	double epsilon = 0.3;
 	double learning_rate = 0.3;
 	double discount_rate = 0.99;
 	int n_actions = 4; // up, down, left, right
@@ -102,8 +102,6 @@ int main() {
 	std::cout << "\nPrinting final policy obtained from SARSA:" << std::endl;
 	maze.print_policy(ag.get_Q());
 
-	std::cout << "\nAFTERPrinting final policy obtained from SARSA:" << std::endl;
-
 	// =============== RUN Q LEARNING ================
 	std::cout << "\n===> RUNNING Q LEARNING" << std::endl;
 	algorithm = 1;
@@ -178,7 +176,7 @@ int main() {
 	std::cout << "\n===> EVALUATION OF SARSA" << std::endl;
 	algorithm = 0;
 	//exp.evaluation(ag, maze, epsilon, algorithm);
-	std::vector<int> starting_states = {0, 9, 56, 8, 16, 143, 10, 32, 46, 61, 28, 31, 63, 11, 46, 47, 107, 121, 136, 142, 12, 72, 84, 100, 76, 115, 117, 12, 120, 141,  143};
+	std::vector<int> starting_states = {0, 9, 56, 8, 16, 10, 32, 46, 61, 28, 31, 63, 11, 46, 47, 107, 121, 136, 12, 72, 84, 100, 76, 115, 117, 12, 120};
 
 	std::vector<int> evals = exp.evaluation(ag, maze, algorithm, epsilon, starting_states);
 

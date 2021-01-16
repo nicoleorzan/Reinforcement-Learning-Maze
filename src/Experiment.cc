@@ -67,6 +67,9 @@ int Experiment::single_run_SARSA(Agent &ag, Environment &env, int exploration_st
     while (i){
 
         rew = env.sample_reward(s, reward_strategy);
+        retur += rew;
+
+        //std::cout<<"reward="<<rew<<std::endl;
         if (s == env.get_final_state()){
             ag.update_Q_final(s, a, rew);
             break;
@@ -82,7 +85,6 @@ int Experiment::single_run_SARSA(Agent &ag, Environment &env, int exploration_st
         a = a_new;
         s = s_new;       
         i += 1;
-        retur += rew;
 
     }
 
@@ -109,6 +111,7 @@ int Experiment::single_run_QL(Agent &ag, Environment &env, int exploration_strat
         a = take_action(ag, s, allow_act, algorithm, exploration_strategy);
 
         rew = env.sample_reward(s, reward_strategy);
+        retur += rew;
 
         if (s == env.get_final_state()){
             ag.update_Q_final(s, a, rew);
@@ -146,6 +149,7 @@ int Experiment::single_run_double_QL(Agent &ag, Environment &env, int exploratio
 
         a = take_action(ag, s, allow_act, algorithm, exploration_strategy);
         rew = env.sample_reward(s, reward_strategy);
+        retur += rew;
 
         if (s == env.get_final_state()){
             ag.update_QA_QB_final(s, a, rew);
@@ -189,6 +193,7 @@ int Experiment::single_run_QV(Agent &ag, Environment &env, int exploration_strat
         //allow_act = env.allowed_actions(s);
         a = take_action(ag, s, allow_act, algorithm, exploration_strategy); 
         rew = env.sample_reward(s, reward_strategy);
+        retur += rew;
 
         if (s == env.get_final_state()){
             ag.update_QV_final(s, a, rew);
@@ -305,7 +310,8 @@ int Experiment::single_eval(Agent &ag, Environment &env, double epsilon, int alg
 
     int s = 0, a = 0;
     std::vector<int> allow_act;
-
+    double rew = 0;
+    double retur = 0;
     ag.set_epsilon(epsilon);
 
     s = starting_state;
@@ -313,17 +319,19 @@ int Experiment::single_eval(Agent &ag, Environment &env, double epsilon, int alg
     int i=1;
     while (i){
 
+        rew = env.sample_reward(s, reward_strategy);
         allow_act = env.allowed_actions(s);
         a = ag.epsilon_greedy(s, allow_act, algorithm);
         //std::cout<<"s="<<s<<", a="<<a<<std::endl; 
-
+        //std::cout<<"rew="<<rew<<"return="<<retur<<std::endl;
         if (s == env.get_final_state()){
             break;
         }
         s = env.next_state(s, a);
 
         i += 1;
+        retur += rew;
     }
-    //std::cout<<"final number of steps="<<i-1<<std::endl;
+    //std::cout<<"final number of steps="<<i-1<<", return="<<retur<<std::endl;
     return i-1;
 };
