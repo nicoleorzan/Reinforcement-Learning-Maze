@@ -80,7 +80,6 @@ int Agent::epsilon_greedy(int state, std::vector<int> allowed_actions, int algor
     int act = 0;
 
     double rand_num = ((double) rand() / (RAND_MAX));
-
     if (rand_num < epsilon){       //random action
         act = allowed_actions[rand() % allowed_actions.size()];
     } else {                       //greedy action
@@ -88,6 +87,7 @@ int Agent::epsilon_greedy(int state, std::vector<int> allowed_actions, int algor
         double max_val;
 
         if (algorithm == 0 || algorithm == 1 || algorithm == 3) { // SARSA or Q_LEARNING or QV_LEARNING
+
             max_val = Q[state*n_actions+allowed_actions[0]];
         } else if (algorithm == 2) { // double Q_learning
             max_val = QA[state*n_actions+allowed_actions[0]]+QB[state*n_actions+allowed_actions[0]];
@@ -188,13 +188,8 @@ int Agent::UCB(int state, std::vector<int> allowed_actions, int algorithm, int t
             UCB_values[state*n_actions+j] = -100000;
         }
     }
-    /*for (int j=0; j<n_actions; j++){
-       std::cout<<"value j="<<j<<", UCB[j]="<<UCB_values[state*n_actions+j]<<std::endl;
-    }*/
 
-    act = choose_max(state); //std::distance(UCB_values + state*n_actions, std::max_element(UCB_values + state*n_actions, UCB_values + state*n_actions + n_actions));
-
-    //std::cout<<"chosen action="<<act<<std::endl;
+    act = choose_max(state);
 
     nt[state*n_actions+act] += 1;
 
@@ -216,10 +211,6 @@ int Agent::choose_max(int state){
             ties.push_back(i);
         }
     }
-
-    //std::cout<<"printing ties"<<std::endl;
-    /*for (std::vector<int>::const_iterator i = ties.begin(); i != ties.end(); ++i)
-        std::cout << *i << ' ';*/
 
     int randomIndex = rand() % ties.size();
     return ties[randomIndex];
@@ -245,7 +236,7 @@ void Agent::initialize_V(){
     }
 };
 
-void Agent::update_V(int s, int a, double reward, int s_next){
+void Agent::update_V(int s, double reward, int s_next){
     V[s] += learning_rate*(reward + discount_rate*V[s_next] - V[s]);
 };
 
@@ -313,7 +304,6 @@ void Agent::update_QA_QB_final(int s, int a, double reward){
         QB[s*n_actions+a] += learning_rate*(reward - QB[s*n_actions+a]);
 };
 
-
 void Agent::update_QV(int s, int a, double reward, int s_new){
     delta = reward + discount_rate*V[s_new] - V[s];
     for (int st=0; st<n_states; st++){
@@ -324,8 +314,6 @@ void Agent::update_QV(int s, int a, double reward, int s_new){
         }
         V[st] += learning_rate*delta*et[st];
     }
-    //et[s] = discount_rate*lambda*et[s] + 1.0; // eta[s];
-    //V[s] += learning_rate*delta*et[s];
     Q[s*n_actions + a] += learning_rate * (reward + discount_rate*V[s_new] - Q[s*n_actions + a]);
 };
 
@@ -335,16 +323,6 @@ void Agent::update_QV_final(int s, int a, double reward){
     V[s] += learning_rate*delta*et[s];
     Q[s*n_actions + a] += learning_rate * (reward - Q[s*n_actions + a]);
 };
-
-/*void Agent::update_model(int s, int a, double rew, int s_next){
-    //model[s*n_actions+a] = rew;
-    //std::multimap<int, double> tmp;
-    
-    //tmp.insert(std::pair<int, double>(a, rew));
-    //model.insert(std::pair<int, std::multimap<int, double>>(s, tmp));
-    dyna_reward[s*n_actions+a] = rew;
-    dyna_next_state[s*n_actions+a] = s_next;
-};*/
 
 void Agent::print(double *matrix, int n_rows, int n_cols){
     for (int i=0; i<n_rows; i++){
@@ -364,4 +342,4 @@ void Agent::print_nt(){
         }
         std::cout<<std::endl;
     }
-}
+};

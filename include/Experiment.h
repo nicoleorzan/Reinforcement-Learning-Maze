@@ -11,39 +11,51 @@ class Experiment{
         int n_experiments;
         int* num_steps_runs;
         int* num_steps_each_experiment;
-        int* average_steps;
+        double* returns_each_experiment;
+
+        double* average_steps;
+        double* std_average_steps;
+        double* average_returns;
+        double* std_average_returns;
 
         double T;
         double c;
+        double retur = 0;
 
-    Experiment(int n_r, int n_exp, double Ti, double ci);
+        int reward_strategy = 0;
+
+    Experiment(int n_r, int n_exp, double Ti);
 
     ~Experiment();
+
+    void set_reward_strategy(int r);
 
     int single_run_SARSA(Agent &ag, Environment & env, int exploration_strategy);
 
     int single_run_QL(Agent &ag, Environment & env, int exploration_strategy);
 
-    //int single_run_DYNAQ(Agent &ag, Environment & env, int exploration_strategy);
-
     int single_run_double_QL(Agent &ag, Environment &env, int exploration_strategy);
 
     int single_run_QV(Agent &ag, Environment &env, int exploration_strategy);
 
-    //int single_run_semi_gradient_SARSA(Agent &ag, Environment &env, int exploration_strategy);
+    int take_action(Agent &ag, int s, std::vector<int> allow_act, int algoithm, int exploration_strategy);
 
+    void learning(Agent &ag, Environment & env, int experiment_number, int algorithm, int exploration_strategy);
 
+    int single_eval(Agent &ag, Environment & env, double epsilon_evaluation, int algorithm, int starting_state);
+   
+    std::vector<int> evaluation(Agent &ag, Environment & env, int algorithm, int epsilon_evaluation, std::vector<int> starting_states);
 
-    void more_runs(Agent &ag, Environment & env, int experiment_number, int algorithm,  int exploration_strategy);
+    void more_experiments(Agent &ag, Environment & env, int algorithm, int exploration_strategy);
 
-    void run_more_experiments(Agent &ag, Environment & env, int algorithm, int exploration_strategy);
+    double* compute_average_steps();
 
-    std::vector<int> run_more_evaluations(Agent &ag, Environment & env, int algorithm, int epsilon, std::vector<int> starting_states);
+    double* compute_average_returns();
 
-    int* compute_average();
+    double* get_std_average_steps();
 
+    double* get_std_average_returns();
 
-    int evaluation(Agent &ag, Environment & env, double epsilon, int algorithm, int starting_state);
 };
 
 #endif

@@ -1,23 +1,21 @@
 #include "Environment.h"
 #include "Random_maze.h"
 #include <iostream>
+#include <random>
 #include <vector>
 #include <algorithm>
 
-struct compare
-{
+struct compare {
     int key;
-    compare(int const &i): key(i) { }
+    compare(int const &i): key(i) {}
  
-    bool operator()(int const &i)
-    {
-        return (i == key);
+    bool operator()(int const &i){ 
+        return (i == key);  
     }
 };
 
-Environment::Environment(int n, int is, int fs, std::vector<int> w){
+Environment::Environment(int n, int fs, std::vector<int> w){
     N = n;
-    initial_state = is;
     final_state = fs; // if here the simulation terminates
     maze = new int[N*N];
     walls = w;
@@ -29,26 +27,29 @@ Environment::~Environment(){
 };
 
 int Environment::random_start(){
-    //srand (time(NULL));
-    int randval = rand() % N*N;
+
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> dis(1, 100);
+    int randval = dis(gen);
 
     while ( maze[randval] == 1 ){
-        randval = rand() % N*N;
+        randval =  dis(gen);
     }
-    initial_state = randval;
     return randval;
 };
 
 int Environment::get_final_state(){
     return final_state;
-}
+};
+
+void Environment::set_final_state(int fs){
+    final_state = fs;
+};
 
 void Environment::display_maze() {
 	for (int i = 0; i < N; i++) {
 		for (int j = 0; j < N; j++) {
-			/*if ((i*N + j) == initial_state) {
-				printf("▶ ");
-			}*/
 			if ((i*N + j) == final_state) {
 				printf("◎ ");
 			}
@@ -110,60 +111,54 @@ void Environment::fill_maze(){
 			}
 		}
 	}*/
-
-    /*for (int i = 0; i < N; i++) {
-		for (int j = 0; j < N; j++) {
-			maze[i*N + j] = 0;
-			if ( (i == 2 & j == 0) || (i == 2 & j == 1) || (i == 2 & j == 2) || (i == 2 & j == 3) || (i == 2 & j == 4) || (i == 2 & j == 5) ||
-            (i == 5 & j == 4) || (i == 5 & j == 5) || (i == 5 & j == 6) || (i == 5 & j == 7) ) {
-				maze[i*N + j] = 1;
-			}
-		}
-    }*/
 };
 
 int Environment::next_state(int state, int action){
     int next_state = state;
 
     if (action == 0){
-        if (state - N >= 0){
-            next_state = state - N;
-        }
-    } 
-    
+        if (state - N >= 0){ next_state = state - N; }
+    }  
     else if (action == 1){
-        if (state + N < N*N){
-            next_state = state + N;
-        }
+        if (state + N < N*N){ next_state = state + N; }
     } 
-    
     else if (action == 2){
-        if (state%N != 0){
-            next_state = state - 1;
-        }
-
+        if (state%N > 0){ next_state = state - 1; }
     } 
-    
     else if (action == 3){
-        if (state+1%N != 0){
-        next_state = state + 1;
-        }
+        if (state+1%N != 0 && state+1%N < N*N){ next_state = state + 1; }
     }
 
-    if (maze[next_state] == 1){
-        next_state = state;
-    }
+    if (maze[next_state] == 1){ next_state = state;}
 
     return next_state;
 };
 
-double Environment::sample_reward(int state){
+double Environment::sample_reward(int s, int reward_strategy){
 
-    int reward = 0;
-    if (state == final_state){
-        reward = 1;
+    double reward = 0;
+    if (reward_strategy == 0){
+        reward = reward_func1(s);
+    } else if (reward_strategy == 1){
+        reward = reward_func2(s);
     }
+    
+    return reward;
+};
 
+double Environment::reward_func1(int state){
+
+    double reward = 0;
+    if ( state == final_state ){ reward = 1; }
+    return reward;
+};
+
+double Environment::reward_func2(int state){
+
+    double reward = -0.1;
+    if ( state == final_state ){ reward = 100; }
+    else if ( maze[state] == 1 ){ reward = -2; }
+    
     return reward;
 };
 

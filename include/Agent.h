@@ -28,6 +28,9 @@ class Agent{
         int *dyna_reward;
         int *dyna_next_state;
 
+        std::vector<int> observed_states;
+        std::multimap<int, std::vector<int>> observed_actions_in_states;
+
         //std::multimap<int, std::multimap<int, double>> model;
         
     Agent(int n_stat, int n_act, double e, double l, double d, int s, double lam);
@@ -58,7 +61,7 @@ class Agent{
 
     void update_QA_QB_final(int s, int a, double reward);
 
-    void update_V(int s, int a, double reward, int s_next);
+    void update_V(int s, double reward, int s_next);
 
     void update_QV(int s, int a, double reward, int s_new);  
     
