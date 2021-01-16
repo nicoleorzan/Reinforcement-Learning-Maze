@@ -25,7 +25,7 @@ Agent::Agent(int n_stat, int n_act, double e, double l, double d, int s, double 
 
     for (int i=0; i<n_states; i++){
         V[i] = 0;
-        et[s] = 0;
+        et[i] = 0;
         for (int j=0; j<n_actions; j++){
             Q[i*n_actions+j] = 0;
             QA[i*n_actions+j]= 0;
@@ -83,19 +83,19 @@ int Agent::epsilon_greedy(int state, std::vector<int> allowed_actions, int algor
     if (rand_num < epsilon){       //random action
         act = allowed_actions[rand() % allowed_actions.size()];
     } else {                       //greedy action
+
         int max_idx = allowed_actions[0];
-        double max_val;
+        double max_val = 0;
 
         if (algorithm == 0 || algorithm == 1 || algorithm == 3) { // SARSA or Q_LEARNING or QV_LEARNING
-
             max_val = Q[state*n_actions+allowed_actions[0]];
+
         } else if (algorithm == 2) { // double Q_learning
             max_val = QA[state*n_actions+allowed_actions[0]]+QB[state*n_actions+allowed_actions[0]];
         }
 
         for (int j=0; j<n_actions; j++){    
             if (std::find(allowed_actions.begin(), allowed_actions.end(), j) != allowed_actions.end()) {
-                //std::cout<<"action "<<j<<" is present in the actions array"<<std::endl;
                 if (algorithm == 0 || algorithm == 1 || algorithm == 3) { // SARSA or Q_LEARNING or QV_LEARNING
                     if (Q[state*n_actions + j] > max_val){
                         max_val = Q[state*n_actions + j];

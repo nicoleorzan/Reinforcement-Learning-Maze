@@ -27,8 +27,6 @@ plt.grid()
 #plt.show()
 plt.savefig("avg_steps_example.png",bbox_inches="tight")
 
-
-"""
 data = pd.read_csv(folder+"returns_data.txt", skiprows=0)
 df = pd.DataFrame(data)
 
@@ -41,16 +39,16 @@ plt.plot(df['step'], df['QV_learning'], label="QV-learning")
 plt.title("Average Steps", fontsize=20)
 plt.legend(fontsize=15,loc='upper right')
 plt.xlim(0,10000)
-plt.ylim(-100, 100)
+plt.ylim(-50, 10)
 plt.xticks(fontsize=15)
 plt.yticks(fontsize=15)
 plt.xlabel("Steps", fontsize=19)
-plt.ylabel("Average steps", fontsize=19)
+plt.ylabel("Average Return", fontsize=19)
 plt.grid()
 #plt.show()
 plt.savefig("avg_returns_example.png",bbox_inches="tight")
 
-
+"""
 
 data = pd.read_csv(folder+"data_evals.txt")
 df = pd.DataFrame(data)

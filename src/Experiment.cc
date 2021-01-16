@@ -215,7 +215,7 @@ void Experiment::learning(Agent &ag, Environment &env, int experiment_number, in
         ag.initialize_Q();
         ag.initialize_V();
     }
-
+   
     for (int run_number=0; run_number<n_runs; run_number++){
         //std::cout<<"Run number="<<run_number<<std::endl;
         if (algorithm == 0 ){

@@ -22,7 +22,7 @@ int main() {
 	double* average_steps_double_q_learning = new double[num_runs];
 	double* average_steps_qv = new double[num_runs];
 
-	/*double* std_average_steps_sarsa = new double[num_runs];
+	double* std_average_steps_sarsa = new double[num_runs];
 	double* std_average_steps_q_learning = new double[num_runs];
 	double* std_average_steps_double_q_learning = new double[num_runs];
 	double* std_average_steps_qv = new double[num_runs];
@@ -30,7 +30,7 @@ int main() {
 	double* average_returns_sarsa = new double[num_runs];
 	double* average_returns_q_learning = new double[num_runs];
 	double* average_returns_double_q_learning = new double[num_runs];
-	double* average_returns_qv = new double[num_runs];*/	
+	double* average_returns_qv = new double[num_runs];	
 
 	double T = 0.01;
 
@@ -95,8 +95,8 @@ int main() {
 	exp.set_reward_strategy(reward_strategy);
 	exp.more_experiments(ag, maze, algorithm, exploraton_strategy);
 	average_steps_sarsa = exp.compute_average_steps();
-	//std_average_steps_sarsa = exp.get_std_average_steps();
-	//average_returns_sarsa = exp.compute_average_returns();
+	std_average_steps_sarsa = exp.get_std_average_steps();
+	average_returns_sarsa = exp.compute_average_returns();
 
 	ag.print(ag.get_Q(), n_states, n_actions);
 	std::cout << "\nPrinting final policy obtained from SARSA:" << std::endl;
@@ -113,8 +113,8 @@ int main() {
 	exp1.set_reward_strategy(reward_strategy);
 	exp1.more_experiments(ag1, maze, algorithm, exploraton_strategy);
 	average_steps_q_learning = exp1.compute_average_steps();
-	//std_average_steps_q_learning = exp1.get_std_average_steps();
-	//average_returns_q_learning = exp1.compute_average_returns();
+	std_average_steps_q_learning = exp1.get_std_average_steps();
+	average_returns_q_learning = exp1.compute_average_returns();
 
 	ag1.print(ag1.get_Q(), n_states, n_actions);    
 	std::cout << "\nPrinting final policy obtained from Q learning:" << std::endl;
@@ -129,8 +129,8 @@ int main() {
 	exp2.set_reward_strategy(reward_strategy);
 	exp2.more_experiments(ag2, maze, algorithm, exploraton_strategy);
 	average_steps_double_q_learning = exp2.compute_average_steps();
-	//std_average_steps_double_q_learning = exp2.get_std_average_steps();
-	//average_returns_double_q_learning = exp2.compute_average_returns();
+	std_average_steps_double_q_learning = exp2.get_std_average_steps();
+	average_returns_double_q_learning = exp2.compute_average_returns();
 
 	ag2.print(ag2.get_QA(), n_states, n_actions);
 	std::cout<<std::endl;
@@ -150,8 +150,8 @@ int main() {
 	exp3.set_reward_strategy(reward_strategy);
 	exp3.more_experiments(ag3, maze, algorithm, exploraton_strategy);
 	average_steps_qv = exp3.compute_average_steps();
-	//std_average_steps_qv = exp3.get_std_average_steps();
-	//average_returns_qv = exp3.compute_average_returns();
+	std_average_steps_qv = exp3.get_std_average_steps();
+	average_returns_qv = exp3.compute_average_returns();
 
 	ag3.print(ag3.get_Q(), n_states, n_actions);
 	std::cout << "\nPrinting final policy obtained from QV learning:" << std::endl;
@@ -162,9 +162,9 @@ int main() {
 	// ===============================================
 
 	for (int i = 0; i < num_runs; i++) {
-		myfile << i <<"," << average_steps_sarsa[i] <<"," << average_steps_q_learning[i] << "," << average_steps_double_q_learning[i] << "," << average_steps_qv[i]<<std::endl;
-		//myfile <<"," << std_average_steps_sarsa[i];// << "," << std_average_steps_q_learning[i] << "," << std_average_steps_double_q_learning[i] << "," << std_average_steps_qv[i] << "\n";
-		//returns_data << i <<"," << average_returns_sarsa[i];// << "," << average_returns_q_learning[i] << "," << average_returns_double_q_learning[i] << "," << average_returns_qv[i] << "\n";
+		myfile << i <<"," << average_steps_sarsa[i] <<"," << average_steps_q_learning[i] << "," << average_steps_double_q_learning[i]<< "," << average_steps_qv[i];
+		myfile <<"," << std_average_steps_sarsa[i] << "," << std_average_steps_q_learning[i] << "," << std_average_steps_double_q_learning[i] << "," << std_average_steps_qv[i] << "\n";
+		returns_data << i <<"," << average_returns_sarsa[i] << "," << average_returns_q_learning[i] << "," << average_returns_double_q_learning[i] << "," << average_returns_qv[i] << "\n";
 	}
 
 
