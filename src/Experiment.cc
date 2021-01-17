@@ -60,15 +60,20 @@ int Experiment::single_run_SARSA(Agent &ag, Environment &env, int exploration_st
     ag.set_initial_state(s);
     allow_act = { 0,1,2,3 };
     //allow_act = env.allowed_actions(s);
+    //int aaa;
     
     a = take_action(ag, s, allow_act, algorithm, exploration_strategy);
 
     int i=1;
     while (i){
 
+        //std::cout<<"TIME="<<i<<std::endl;
         rew = env.sample_reward(s, reward_strategy);
         retur += rew;
-
+        //std::cout<<"s="<<s<<", a="<<a<<std::endl;
+        //if (s<0 || s >= 12*12){
+            //std::cin>>aaa;
+        //}
         //std::cout<<"reward="<<rew<<std::endl;
         if (s == env.get_final_state()){
             ag.update_Q_final(s, a, rew);
@@ -150,6 +155,7 @@ int Experiment::single_run_double_QL(Agent &ag, Environment &env, int exploratio
         a = take_action(ag, s, allow_act, algorithm, exploration_strategy);
         rew = env.sample_reward(s, reward_strategy);
         retur += rew;
+        //std::cout<<"s="<<s<<", a="<<a<<std::endl;
 
         if (s == env.get_final_state()){
             ag.update_QA_QB_final(s, a, rew);

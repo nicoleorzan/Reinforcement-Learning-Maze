@@ -14,8 +14,8 @@ int main() {
 	double learning_rate = 0.3;
 	double discount_rate = 0.99;
 	int n_actions = 4; // up, down, left, right
-	int num_runs = 10000; 
-	int num_experiments = 10;
+	int num_runs = 90; 
+	int num_experiments = 1;
 	double lambda = 0.5;
 	double* average_steps_sarsa = new double[num_runs];
 	double* average_steps_q_learning = new double[num_runs];
@@ -32,7 +32,7 @@ int main() {
 	double* average_returns_double_q_learning = new double[num_runs];
 	double* average_returns_qv = new double[num_runs];	
 
-	double T = 0.01;
+	double T = 0.1;
 
 	// timing-related variables
 	// double tstart, tstop, ctime;
@@ -83,7 +83,7 @@ int main() {
 
 
 	int algorithm = 0; // algorithm number: 0=SARSA, 1=Q_learning, 2=double Q_learning, 3=QV
-	int exploraton_strategy = 0; // 0 = epsilon-greedy; 1 = boltzmann
+	int exploraton_strategy = 1; // 0 = epsilon-greedy; 1 = boltzmann
 	int reward_strategy = 1; // 0 = old reward strategy, 1 = new reward strategy
 
 

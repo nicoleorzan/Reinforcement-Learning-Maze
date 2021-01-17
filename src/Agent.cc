@@ -118,32 +118,48 @@ int Agent::epsilon_greedy(int state, std::vector<int> allowed_actions, int algor
 int Agent::boltzmann_exploration(int state, std::vector<int> allowed_actions, int algorithm, double T){
 
     int act = 0;
-    double max_val = 0;
+    double max_val = -99999;
+    double min_val = 999;
     double denom = 0;
     double Qvalue = 0;
 
     std::vector<double> weights;
 
+    // find max and min
     for (int i=0; i<n_actions; i++){
         if (std::find(allowed_actions.begin(), allowed_actions.end(), i) != allowed_actions.end()) {
             if (algorithm == 2){
-                Qvalue = QA[state*n_actions+i]+QB[state*n_actions+i];
-                Q_temperature[state*n_actions+i] = Qvalue/T;
-                if ( Qvalue > max_val){
-                    max_val = Qvalue;
-                }            
+                Qvalue = QA[state*n_actions+i];
             } else {
-                Q_temperature[state*n_actions+i] = Q[state*n_actions+i]/T;
-                if (Q[state*n_actions+i] > max_val){
-                    max_val = Q[state*n_actions+i];
-                }
+                Qvalue = Q[state*n_actions+i];
             }
+            if ( Qvalue > max_val){
+                max_val = Qvalue;
+            }            
+            if (Qvalue < min_val){
+                min_val = Qvalue;
+            }
+        }
+    }
+
+    // compute Q/temperatture normalized
+    for (int i=0; i<n_actions; i++){
+        if (std::find(allowed_actions.begin(), allowed_actions.end(), i) != allowed_actions.end()) {
+            if (algorithm == 2){
+                Qvalue = QA[state*n_actions+i];
+            } else {
+                Qvalue = Q[state*n_actions+i];
+            }
+            Q_temperature[state*n_actions+i] = (Qvalue-min_val)/(max_val-min_val)/T;
+            //std::cout<<"Q="<<QA[state*n_actions+i]<<", Q_TEMP="<<Q_temperature[state*n_actions+i]<<std::endl;
         }
     }
     
     for (int i=0; i<n_actions; i++){
         if (std::find(allowed_actions.begin(), allowed_actions.end(), i) != allowed_actions.end()) {
             denom += exp(Q_temperature[state*n_actions+i] - max_val);
+            //std::cout<<"Q_TEMP="<<Q_temperature[state*n_actions+i]<<std::endl;
+            //std::cout<<"denom="<<denom<<std::endl;
         }
     }
 
@@ -152,7 +168,7 @@ int Agent::boltzmann_exploration(int state, std::vector<int> allowed_actions, in
             weights.push_back(exp(Q_temperature[state*n_actions+i] - max_val)/denom);
         }
         else {
-            weights.push_back(0); // CHRCK IF 0 IS OKAY TO BE PUT IN TO THE VECTOR
+            weights.push_back(0);
         }
     }
 
@@ -160,6 +176,7 @@ int Agent::boltzmann_exploration(int state, std::vector<int> allowed_actions, in
     std::mt19937 generator(rd());
 
     std::discrete_distribution<int> distribution (weights.begin(), weights.end());
+    //generator.seed(time(0));
     act = distribution(generator);
 
     return act;
