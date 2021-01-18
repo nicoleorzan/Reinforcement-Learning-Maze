@@ -228,7 +228,7 @@ void Experiment::learning(Agent &ag, Environment &env, int experiment_number, in
     }
    
     for (int run_number=0; run_number<n_runs; run_number++){
-        //std::cout<<"Run number="<<run_number<<std::endl;
+        std::cout<<"Run number="<<run_number<<std::endl;
         if (algorithm == 0 ){
             num_steps_each_experiment[experiment_number*n_runs+run_number] = single_run_SARSA(ag, env, exp_str);
         } else if (algorithm == 1 ){
@@ -274,11 +274,11 @@ double* Experiment::compute_average_steps(){
         for (int j=0; j<n_experiments; j++){
             average_steps[i] += num_steps_each_experiment[j*n_runs+i]; // CONTROLLARE QUI
         }
+        average_steps[i] = average_steps[i]/n_experiments;
 
         for (int j=0; j<n_experiments; j++){
             std_average_steps[i] += (num_steps_each_experiment[j*n_runs+i]-average_steps[i])*(num_steps_each_experiment[j*n_runs+i]-average_steps[i]); // CONTROLLARE QUI
         }
-        average_steps[i] = average_steps[i]/n_experiments;
         std_average_steps[i] = sqrt(std_average_steps[i]/n_experiments);
         //std::cout<<"average steps of run number "<<i<<"= "<<average_steps[i]<<std::endl;
     }
@@ -294,10 +294,11 @@ double* Experiment::compute_average_returns(){
         for (int j=0; j<n_experiments; j++){
             average_returns[i] += returns_each_experiment[j*n_runs+i];
         }
+        average_returns[i] = average_returns[i]/n_experiments;
+
         for (int j=0; j<n_experiments; j++){
             std_average_returns[i] += (returns_each_experiment[j*n_runs+i]-average_returns[i])*(returns_each_experiment[j*n_runs+i]-average_returns[i]); // CONTROLLARE QUI
         }
-        average_returns[i] = average_returns[i]/n_experiments;
         std_average_returns[i] = sqrt(std_average_returns[i]/n_experiments);
         //std::cout<<"average steps of run number "<<i<<"= "<<average_steps[i]<<std::endl;
     }
