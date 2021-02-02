@@ -11,7 +11,7 @@ Four algorithms have been implemented to solve the maze problem:
 * SARSA
 * Q-learning
 * Double Q-learning
-* QV($\lambda$) learning
+* QV(λ)-learning
 
 Both the ε-greedy and Boltzmann exploration strategies are available.
 
@@ -31,7 +31,7 @@ $ make
 
 Run the main code, which executes the four learning algorithms on the example maze in figure:
 
-![alt text](https://github.com/nicoleorzan/RL-maze-solver/images/maze.png)
+![image](https://github.com/nicoleorzan/RL-maze-solver/images/maze.png)
 
 When finished, clean up:
 
