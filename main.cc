@@ -80,8 +80,8 @@ int main() {
 
 	std::ofstream myfile;
 	std::ofstream returns_data;
-	myfile.open("data/data_T01_lr005.txt");
-	returns_data.open("data/returns_dataT01_lr005.txt");
+	myfile.open("data/data.txt");
+	returns_data.open("data/returns_data.txt");
 	myfile << "epsilon = " << epsilon << "\n" << "learning_rate = " << learning_rate << "\n" << "discount_rate = " << discount_rate << "\n" << "lambda = " << lambda << "\n"<< "\n" << "T = " << T << "\n";
 	myfile << "step,SARSA,Q_learning,double_Q_learning,QV_learning,std_SARSA,std_Q,std_double_Q,std_QV\n";
 	returns_data << "step,SARSA,Q_learning,double_Q_learning,QV_learning\n";
