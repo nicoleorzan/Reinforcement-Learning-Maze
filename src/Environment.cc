@@ -1,5 +1,4 @@
 #include "Environment.h"
-#include "Random_maze.h"
 #include <iostream>
 #include <random>
 #include <vector>
@@ -93,24 +92,6 @@ void Environment::fill_maze(){
         } else { maze[i] = 0;}
     }
 
-    /*
-    for (int i = 0; i < N; i++) {
-		for (int j = 0; j < N; j++) {
-			maze[i*N + j] = 0;
-			if ((i == 0 & j == 0) || (i == 0 & j == 1) || (i == 0 & j == 2) || (i == 0 & j == 3) || (i == 0 & j == 4) || (i == 0 & j == 5)
-				|| (i == 0 & j == 6)
-				|| (i == 1 & j == 0) || (i == 1 & j == 5)
-				|| (i == 2 & j == 0) || (i == 2 & j == 3) || (i == 2 & j == 4) || (i == 2 & j == 5)
-				|| (i == 3 & j == 0) || (i == 4 & j == 0) || (i == 5 & j == 0) || (i == 5 & j == 2) || (i == 5 & j == 3) || (i == 5 & j == 4)
-				|| (i == 1 & j == 1) || (i == 4 & j == 4) || (i == 4 & j == 5) || (i == 4 & j == 6)
-				|| (i == 3 & j == 2) || (i == 7 & j == 1) || (i == 7 & j == 2) || (i == 7 & j == 3)
-				|| (i == 7 & j == 4) || (i == 7 & j == 5) || (i == 7 & j == 6) || (i == 7 & j == 7)
-				|| (i == 2 & j == 7) || (i == 3 & j == 7) || (i == 4 & j == 7) || (i == 5 & j == 7)
-				|| (i == 6 & j == 7) || (i == 6 & j == 6)) {
-				maze[i*N + j] = 1;
-			}
-		}
-	}*/
 };
 
 int Environment::next_state(int state, int action){
