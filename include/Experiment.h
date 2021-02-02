@@ -19,7 +19,6 @@ class Experiment{
         double* std_average_returns;
 
         double T;
-        double c;
         double retur = 0;
 
         int reward_strategy = 0;
@@ -29,6 +28,8 @@ class Experiment{
     ~Experiment();
 
     void set_reward_strategy(int r);
+
+    void set_T(int t);
 
     int single_run_SARSA(Agent &ag, Environment & env, int exploration_strategy);
 

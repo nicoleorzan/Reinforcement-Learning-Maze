@@ -57,8 +57,8 @@ void Environment::display_maze() {
 				printf("■ ");
 			}
 			else {
-				//printf("□ ");
-                std::cout<<i*N+j<<" ";
+				printf("□ ");
+                //std::cout<<i*N+j<<" ";
 			}
 		}
 		printf("\n");
@@ -176,7 +176,7 @@ void Environment::print_policy(double *Q){
 				printf("■ ");
 			}
             else{
-                max_val = 0;
+                max_val = -9999;
                 max_idx = 4;
                 for (int act=0; act<4; act++){
                     if ( Q[(i*N+j)*4+act] > max_val ){

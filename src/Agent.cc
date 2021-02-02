@@ -18,10 +18,12 @@ Agent::Agent(int n_stat, int n_act, double e, double l, double d, int s, double 
     QA = new double[n_states*n_actions];
     QB = new double[n_states*n_actions];
     Q_temperature = new double[n_states*n_actions];
+    pii = new double[n_states*n_actions]();
+    preferences =  new double[n_states*n_actions]();
     UCB_values = new double[n_states*n_actions];
     nt = new int[n_states*n_actions];
-    dyna_next_state = new int[n_states*n_actions];
-    dyna_reward = new int[n_states*n_actions];
+    //dyna_next_state = new int[n_states*n_actions];
+    //dyna_reward = new int[n_states*n_actions];
 
     for (int i=0; i<n_states; i++){
         V[i] = 0;
@@ -33,8 +35,8 @@ Agent::Agent(int n_stat, int n_act, double e, double l, double d, int s, double 
             Q_temperature[i*n_actions+j] = 0;
             UCB_values[i*n_actions+j] = 0;
             nt[i*n_actions+j] = 0;
-            dyna_next_state[i*n_actions+j] = 0;
-            dyna_reward[i*n_act+j] = 0;
+            //dyna_next_state[i*n_actions+j] = 0;
+            //dyna_reward[i*n_act+j] = 0;
         }
     }
 };
@@ -46,10 +48,12 @@ Agent::~Agent(){
     delete[] QA;
     delete[] QB;
     delete[] Q_temperature;
+    delete[] pii;
+    delete[] preferences;
     delete[] UCB_values;
     delete[] nt;
-    delete[] dyna_next_state;
-    delete[] dyna_reward;
+    //delete[] dyna_next_state;
+    //delete[] dyna_reward;
 };
 
 int Agent::get_initial_state(){
@@ -175,11 +179,35 @@ int Agent::boltzmann_exploration(int state, std::vector<int> allowed_actions, in
     std::random_device rd;
     std::mt19937 generator(rd());
 
+    //for (std::vector<double>::const_iterator i = weights.begin(); i != weights.end(); ++i)
+    //std::cout << *i << ' ';
+    //std::cout<<std::endl;
+
+
     std::discrete_distribution<int> distribution (weights.begin(), weights.end());
     //generator.seed(time(0));
     act = distribution(generator);
 
     return act;
+};
+
+void Agent::update_avg_reward(int n, double r){
+    if (n == 0){
+        avg_reward += 1*(r - avg_reward);
+    }
+    else {
+        avg_reward += 1/n*(r - avg_reward);
+    }
+};
+
+void Agent::update_action_preferences(double r, int state, int act){
+    for (int i=0; i<n_actions; i++){
+        if (i==act){
+            preferences[state*n_actions+i] += learning_rate*(r-avg_reward)*(1-pii[state*n_actions+i]);
+        } else {
+            preferences[state*n_actions+i] -= learning_rate*(r-avg_reward)*pii[state*n_actions+i];
+        }
+    }
 };
 
 int Agent::UCB(int state, std::vector<int> allowed_actions, int algorithm, int t, double c){
@@ -285,7 +313,7 @@ void Agent::update_Q_final(int s, int a, double reward){ // both for SARSA and Q
 void Agent::update_QA_QB(int s, int a, double reward, int s_next, std::vector<int> allowed_actions, int update_index){
 
 	int maximizing_action = allowed_actions[0];
-    double max_val;
+    double max_val = 0;
 
     if (update_index == 0){  // 0 == QA
     	max_val = QA[s_next*n_actions + allowed_actions[0]];

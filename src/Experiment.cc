@@ -15,7 +15,6 @@ Experiment::Experiment(int n_r, int n_exp, double Ti){
     std_average_returns = new double[n_runs];
 
     T = Ti;
-    c = 0;
 };
 
 Experiment::~Experiment(){
@@ -32,7 +31,11 @@ void Experiment::set_reward_strategy(int r){
     if (r==0 || r==1){
         reward_strategy = r;
     }
-}
+};
+
+void Experiment::set_T(int t){
+    T = t;
+};
 
 int Experiment::take_action(Agent &ag, int s, std::vector<int> allow_act, int algorithm, int exploration_strategy){
 
@@ -42,7 +45,7 @@ int Experiment::take_action(Agent &ag, int s, std::vector<int> allow_act, int al
         a = ag.epsilon_greedy(s, allow_act, algorithm);  // 1 == Q_LEARNING
     } else if (exploration_strategy == 1){
         a = ag.boltzmann_exploration(s, allow_act, algorithm, T);  // 1 == Q_LEARNING  
-    }   
+    }
 
     return a;
 };
@@ -59,29 +62,25 @@ int Experiment::single_run_SARSA(Agent &ag, Environment &env, int exploration_st
     s = env.random_start();
     ag.set_initial_state(s);
     allow_act = { 0,1,2,3 };
-    //allow_act = env.allowed_actions(s);
-    //int aaa;
-    
+
     a = take_action(ag, s, allow_act, algorithm, exploration_strategy);
 
     int i=1;
     while (i){
 
-        //std::cout<<"TIME="<<i<<std::endl;
         rew = env.sample_reward(s, reward_strategy);
+        if (exploration_strategy==2){
+            ag.update_avg_reward(i, rew);
+            ag.update_action_preferences(rew, s, a);
+        }
         retur += rew;
-        //std::cout<<"s="<<s<<", a="<<a<<std::endl;
-        //if (s<0 || s >= 12*12){
-            //std::cin>>aaa;
-        //}
-        //std::cout<<"reward="<<rew<<std::endl;
+
         if (s == env.get_final_state()){
             ag.update_Q_final(s, a, rew);
             break;
         }
 
         s_new = env.next_state(s, a);
-        //allow_act = env.allowed_actions(s_new);
 
         a_new = take_action(ag, s, allow_act, algorithm, exploration_strategy);
 
@@ -107,7 +106,6 @@ int Experiment::single_run_QL(Agent &ag, Environment &env, int exploration_strat
 
     s = env.random_start();
     ag.set_initial_state(s);
-    //allow_act = env.allowed_actions(s);
     allow_act = { 0,1,2,3 };
 
     int i=1;
@@ -124,7 +122,6 @@ int Experiment::single_run_QL(Agent &ag, Environment &env, int exploration_strat
         }
 
         s_new = env.next_state(s, a);
-        //allow_act = env.allowed_actions(s_new);
         ag.update_Q_Learning(s, a, rew, s_new, allow_act);
 
         s = s_new;       
@@ -146,7 +143,6 @@ int Experiment::single_run_double_QL(Agent &ag, Environment &env, int exploratio
 
     s = env.random_start();
     ag.set_initial_state(s);
-    //allow_act = env.allowed_actions(s);
     allow_act = { 0,1,2,3 };
 
     int i=1;
@@ -155,7 +151,6 @@ int Experiment::single_run_double_QL(Agent &ag, Environment &env, int exploratio
         a = take_action(ag, s, allow_act, algorithm, exploration_strategy);
         rew = env.sample_reward(s, reward_strategy);
         retur += rew;
-        //std::cout<<"s="<<s<<", a="<<a<<std::endl;
 
         if (s == env.get_final_state()){
             ag.update_QA_QB_final(s, a, rew);
@@ -163,7 +158,6 @@ int Experiment::single_run_double_QL(Agent &ag, Environment &env, int exploratio
         }
 
         s_new = env.next_state(s, a);
-        //allow_act = env.allowed_actions(s_new);
 
         if ( ((double) rand() / (RAND_MAX)) < 0.5){
             ag.update_QA_QB(s, a, rew, s_new, allow_act, 0); // 0 == QA
@@ -196,7 +190,6 @@ int Experiment::single_run_QV(Agent &ag, Environment &env, int exploration_strat
     int i=1;
     while (i){
 
-        //allow_act = env.allowed_actions(s);
         a = take_action(ag, s, allow_act, algorithm, exploration_strategy); 
         rew = env.sample_reward(s, reward_strategy);
         retur += rew;
@@ -207,7 +200,6 @@ int Experiment::single_run_QV(Agent &ag, Environment &env, int exploration_strat
         }
 
         s_new = env.next_state(s, a);
-        //allow_act = env.allowed_actions(s_new);
 
         ag.update_QV(s, a, rew, s_new);
         
@@ -228,7 +220,7 @@ void Experiment::learning(Agent &ag, Environment &env, int experiment_number, in
     }
    
     for (int run_number=0; run_number<n_runs; run_number++){
-        std::cout<<"Run number="<<run_number<<std::endl;
+
         if (algorithm == 0 ){
             num_steps_each_experiment[experiment_number*n_runs+run_number] = single_run_SARSA(ag, env, exp_str);
         } else if (algorithm == 1 ){
@@ -238,7 +230,6 @@ void Experiment::learning(Agent &ag, Environment &env, int experiment_number, in
         } else if (algorithm == 3 ){
             num_steps_each_experiment[experiment_number*n_runs+run_number] = single_run_QV(ag, env, exp_str);
         }
-        // /std::cout<<"return="<<retur<<std::endl;
         returns_each_experiment[experiment_number*n_runs+run_number] = retur;
     }
 };
@@ -248,14 +239,13 @@ void Experiment::more_experiments(Agent &ag, Environment &env, int algorithm, in
     std::cout<<"\nRunning "<<n_experiments<<" experiments, each one of "<<n_runs<<" runs."<<std::endl;
 
     for (int exp_number=0; exp_number<n_experiments; exp_number++){
-        std::cout<<"\nExperiment number="<<exp_number<<std::endl;
+        //std::cout<<"\nExperiment number="<<exp_number<<std::endl;
         this->learning(ag, env, exp_number, algorithm, exploration_strategy);
     }
 };
 
 std::vector<int> Experiment::evaluation(Agent &ag, Environment &env, int algorithm, int epsilon, std::vector<int> starting_states ){
 
-    std::cout<<"\nRunning "<<starting_states.size()<<" evaluations."<<std::endl;
     std::vector<int> evaluation_steps;
 
     for (int i=0; i<(int)starting_states.size(); i++){
@@ -267,7 +257,7 @@ std::vector<int> Experiment::evaluation(Agent &ag, Environment &env, int algorit
 
 double* Experiment::compute_average_steps(){
 
-    std::cout<<"Computing the average of the steps the agent needs to find the final block. \nAverage is computed on the group of "<<n_experiments<<" experiments.\n\n";
+    //std::cout<<"Computing the average of the steps the agent needs to find the final block. \nAverage is computed on the group of "<<n_experiments<<" experiments.\n\n";
     for (int i=0; i<n_runs; i++){
         average_steps[i] = 0;
         std_average_steps[i] = 0;
@@ -280,14 +270,13 @@ double* Experiment::compute_average_steps(){
             std_average_steps[i] += (num_steps_each_experiment[j*n_runs+i]-average_steps[i])*(num_steps_each_experiment[j*n_runs+i]-average_steps[i]); // CONTROLLARE QUI
         }
         std_average_steps[i] = sqrt(std_average_steps[i]/n_experiments);
-        //std::cout<<"average steps of run number "<<i<<"= "<<average_steps[i]<<std::endl;
     }
     return average_steps;
 };
 
 double* Experiment::compute_average_returns(){
 
-    std::cout<<"Computing the average of the returns the agent obtained in each epsode. \nAverage is computed on the group of "<<n_experiments<<" experiments.\n\n";
+    //std::cout<<"Computing the average of the returns the agent obtained in each epsode. \nAverage is computed on the group of "<<n_experiments<<" experiments.\n\n";
     for (int i=0; i<n_runs; i++){
         average_returns[i] = 0;
         std_average_returns[i] = 0;
@@ -300,7 +289,6 @@ double* Experiment::compute_average_returns(){
             std_average_returns[i] += (returns_each_experiment[j*n_runs+i]-average_returns[i])*(returns_each_experiment[j*n_runs+i]-average_returns[i]); // CONTROLLARE QUI
         }
         std_average_returns[i] = sqrt(std_average_returns[i]/n_experiments);
-        //std::cout<<"average steps of run number "<<i<<"= "<<average_steps[i]<<std::endl;
     }
     return average_returns;
 };
@@ -329,8 +317,6 @@ int Experiment::single_eval(Agent &ag, Environment &env, double epsilon, int alg
         rew = env.sample_reward(s, reward_strategy);
         allow_act = env.allowed_actions(s);
         a = ag.epsilon_greedy(s, allow_act, algorithm);
-        //std::cout<<"s="<<s<<", a="<<a<<std::endl; 
-        //std::cout<<"rew="<<rew<<"return="<<retur<<std::endl;
         if (s == env.get_final_state()){
             break;
         }
@@ -339,6 +325,5 @@ int Experiment::single_eval(Agent &ag, Environment &env, double epsilon, int alg
         i += 1;
         retur += rew;
     }
-    //std::cout<<"final number of steps="<<i-1<<", return="<<retur<<std::endl;
     return i-1;
 };

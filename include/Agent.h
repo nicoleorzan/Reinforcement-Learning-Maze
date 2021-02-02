@@ -22,11 +22,15 @@ class Agent{
         double *QA;
         double *QB;
         double *Q_temperature;
+        double *pii;
+        double *preferences;
         double *UCB_values;
         int *nt;
 
-        int *dyna_reward;
-        int *dyna_next_state;
+        //int *dyna_reward;
+        //int *dyna_next_state;
+
+        double avg_reward = 0;
 
         std::vector<int> observed_states;
         std::multimap<int, std::vector<int>> observed_actions_in_states;
@@ -42,11 +46,17 @@ class Agent{
     void set_initial_state(int s);
 
     void set_epsilon(double e);
-
+    
     int epsilon_greedy(int state, std::vector<int> allowed_actions, int algorithm);
 
     int boltzmann_exploration(int state, std::vector<int> allowed_actions, int algorithm, double T);
+
+    int GBA(int state, std::vector<int> allowed_actions, int algorithm);
     
+    void update_action_preferences(double r, int state, int a);
+
+    void update_avg_reward(int n, double r);
+
     int UCB(int state, std::vector<int> allowed_actions, int algorithm, int t, double c);
 
     int choose_max(int state);

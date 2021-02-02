@@ -1,8 +1,8 @@
 EXE = a.out
 CXX = c++
-CFLAGS = -I include -g -std=c++11 -Wall -Wextra
+CFLAGS = -I include -g -std=c++11 -Wall -Wextra -O3
 
-SRC = main.cc src/Agent.cc src/Environment.cc src/Experiment.cc src/Random_maze.cc
+SRC = main.cc src/Agent.cc src/Environment.cc src/Experiment.cc
 OBJ=$(SRC:.cc=.o)
 INC = $(wildcard *.h)
 
@@ -20,9 +20,8 @@ clean:
 $(EXE): $(OBJ)
 	$(CXX) $^ -o $(EXE)
 
-main.o: include/Agent.h include/Environment.h include/Experiment.h include/Random_maze.h
+main.o: include/Agent.h include/Environment.h include/Experiment.h
 
 src/Agent.o: include/Agent.h
-src/Random_maze.o: include/Random_maze.h
-src/Environment.o: include/Environment.h  include/Random_maze.h
+src/Environment.o: include/Environment.h
 src/Experiment.o: include/Agent.h  include/Environment.h include/Experiment.h

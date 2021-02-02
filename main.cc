@@ -11,10 +11,9 @@ int main() {
 
 	int N = 12;
 	double epsilon = 0.3;
-	double learning_rate = 0.3;
 	double discount_rate = 0.99;
 	int n_actions = 4; // up, down, left, right
-	int num_runs = 90; 
+	int num_runs = 10000; 
 	int num_experiments = 1;
 	double lambda = 0.5;
 	double* average_steps_sarsa = new double[num_runs];
@@ -32,7 +31,10 @@ int main() {
 	double* average_returns_double_q_learning = new double[num_runs];
 	double* average_returns_qv = new double[num_runs];	
 
-	double T = 0.1;
+	double* std_average_returns_sarsa = new double[num_runs];
+	double* std_average_returns_q_learning = new double[num_runs];
+	double* std_average_returns_double_q_learning = new double[num_runs];
+	double* std_average_returns_qv = new double[num_runs];
 
 	// timing-related variables
 	// double tstart, tstop, ctime;
@@ -73,10 +75,13 @@ int main() {
 		return -1;
 	}
 
+	double T = 0.1;
+	double learning_rate = 0.05;
+
 	std::ofstream myfile;
 	std::ofstream returns_data;
-	myfile.open("data/data.txt");
-	returns_data.open("data/returns_data.txt");
+	myfile.open("data/data_T01_lr005.txt");
+	returns_data.open("data/returns_dataT01_lr005.txt");
 	myfile << "epsilon = " << epsilon << "\n" << "learning_rate = " << learning_rate << "\n" << "discount_rate = " << discount_rate << "\n" << "lambda = " << lambda << "\n"<< "\n" << "T = " << T << "\n";
 	myfile << "step,SARSA,Q_learning,double_Q_learning,QV_learning,std_SARSA,std_Q,std_double_Q,std_QV\n";
 	returns_data << "step,SARSA,Q_learning,double_Q_learning,QV_learning\n";
@@ -97,8 +102,9 @@ int main() {
 	average_steps_sarsa = exp.compute_average_steps();
 	std_average_steps_sarsa = exp.get_std_average_steps();
 	average_returns_sarsa = exp.compute_average_returns();
+	std_average_returns_sarsa = exp.get_std_average_returns();
 
-	ag.print(ag.get_Q(), n_states, n_actions);
+	//ag.print(ag.get_Q(), n_states, n_actions);
 	std::cout << "\nPrinting final policy obtained from SARSA:" << std::endl;
 	maze.print_policy(ag.get_Q());
 
@@ -113,8 +119,9 @@ int main() {
 	average_steps_q_learning = exp1.compute_average_steps();
 	std_average_steps_q_learning = exp1.get_std_average_steps();
 	average_returns_q_learning = exp1.compute_average_returns();
+	std_average_returns_q_learning = exp1.get_std_average_returns();
 
-	ag1.print(ag1.get_Q(), n_states, n_actions);    
+	//ag1.print(ag1.get_Q(), n_states, n_actions);    
 	std::cout << "\nPrinting final policy obtained from Q learning:" << std::endl;
 	maze.print_policy(ag1.get_Q());
 
@@ -129,10 +136,11 @@ int main() {
 	average_steps_double_q_learning = exp2.compute_average_steps();
 	std_average_steps_double_q_learning = exp2.get_std_average_steps();
 	average_returns_double_q_learning = exp2.compute_average_returns();
+	std_average_returns_double_q_learning = exp2.get_std_average_returns();
 
-	ag2.print(ag2.get_QA(), n_states, n_actions);
+	//ag2.print(ag2.get_QA(), n_states, n_actions);
 	std::cout<<std::endl;
-	ag2.print(ag2.get_QB(), n_states, n_actions);
+	//ag2.print(ag2.get_QB(), n_states, n_actions);
 	
 	std::cout << "\nPrinting final policy obtained from double Q learning (QA):" << std::endl;
 	maze.print_policy(ag2.get_QA());
@@ -150,8 +158,9 @@ int main() {
 	average_steps_qv = exp3.compute_average_steps();
 	std_average_steps_qv = exp3.get_std_average_steps();
 	average_returns_qv = exp3.compute_average_returns();
+	std_average_returns_qv = exp3.get_std_average_returns();
 
-	ag3.print(ag3.get_Q(), n_states, n_actions);
+	//ag3.print(ag3.get_Q(), n_states, n_actions);
 	std::cout << "\nPrinting final policy obtained from QV learning:" << std::endl;
 	maze.print_policy(ag3.get_Q());
 
@@ -162,66 +171,9 @@ int main() {
 	for (int i = 0; i < num_runs; i++) {
 		myfile << i <<"," << average_steps_sarsa[i] <<"," << average_steps_q_learning[i] << "," << average_steps_double_q_learning[i]<< "," << average_steps_qv[i];
 		myfile <<"," << std_average_steps_sarsa[i] << "," << std_average_steps_q_learning[i] << "," << std_average_steps_double_q_learning[i] << "," << std_average_steps_qv[i] << "\n";
-		returns_data << i <<"," << average_returns_sarsa[i] << "," << average_returns_q_learning[i] << "," << average_returns_double_q_learning[i] << "," << average_returns_qv[i] << "\n";
+		returns_data << i <<"," << average_returns_sarsa[i] << "," << average_returns_q_learning[i] << "," << average_returns_double_q_learning[i] << "," << average_returns_qv[i];
+		returns_data << i <<"," << std_average_returns_sarsa[i] << "," << std_average_returns_q_learning[i] << "," << std_average_returns_double_q_learning[i] << "," << std_average_returns_qv[i] << "\n";
 	}
-
-
-
-	// ===============================================
-	// ================= EVALUATION ==================
-	// ===============================================
-
-	/*std::cout << "Performing evaluation with greedy policy with random starting state:" << std::endl;
-	epsilon = 0.1;
-	std::cout << "\n===> EVALUATION OF SARSA" << std::endl;
-	algorithm = 0;
-	//exp.evaluation(ag, maze, epsilon, algorithm);
-	std::vector<int> starting_states = {0, 9, 56, 8, 16, 10, 32, 46, 61, 28, 31, 63, 11, 46, 47, 107, 121, 136, 12, 72, 84, 100, 76, 115, 117, 12, 120};
-
-	std::vector<int> evals = exp.evaluation(ag, maze, algorithm, epsilon, starting_states);
-
-	std::cout << "\n===> EVALUATION OF Q LEARNING" << std::endl;
-	algorithm = 1;
-	//exp1.evaluation(ag1, maze, epsilon, algorithm);
-	std::vector<int> evals1 = exp1.evaluation(ag1, maze, algorithm, epsilon, starting_states);
-
-	std::cout << "\n===> EVALUATION OF DOUBLE Q LEARNING" << std::endl;
-	algorithm = 2;
-	//exp2.evaluation(ag2, maze, epsilon, algorithm);
-	std::vector<int> evals2 = exp2.evaluation(ag2, maze, algorithm, epsilon, starting_states);
-
-	std::cout << "\n===> EVALUATION OF QV LEARNING" << std::endl;
-	algorithm = 3;
-	//exp3.evaluation(ag3, maze, epsilon, algorithm);
-	std::vector<int> evals3 = exp3.evaluation(ag3, maze, algorithm, epsilon, starting_states);
-
-	// ==========================================================
-	// ================= FILLING EVALUATION FILE ================
-	// ==========================================================
-
-	std::ofstream myfile_evals;
-	myfile_evals.open("data/data_evals.txt");
-	myfile_evals << "step,SARSA,Q_learning,double_Q_learning,QV_learning\n";
-	for (int i = 0; i < (int)starting_states.size(); i++) {
-		myfile_evals << i <<"," << evals[i] << "," << evals1[i] << "," << evals2[i] << "," << evals3[i] << "\n";
-	}*/
-
-	//myfile_evals.close();
-
-	//delete[] average_steps_sarsa;
-	/*delete[] average_steps_q_learning;
-	delete[] average_steps_double_q_learning;
-	delete[] average_steps_qv;
-
-	delete[] std_average_steps_sarsa;
-	delete[] std_average_steps_q_learning;
-	delete[] std_average_steps_double_q_learning;
-	delete[] std_average_steps_qv;
-
-	delete[] average_returns_sarsa;
-	delete[] average_returns_q_learning;
-	delete[] average_returns_double_q_learning;
-	delete[] average_returns_qv;*/
 
 	myfile.close();
 	returns_data.close();
